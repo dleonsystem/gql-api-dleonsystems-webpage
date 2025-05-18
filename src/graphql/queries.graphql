@@ -1,0 +1,40 @@
+type Query {
+  ## Inicia sesión y retorna un token JWT.
+  login(email: String!, password: String!): ResultToken!
+  ## Información del usuario autenticado.
+  me: ResultUser!
+  ## Lista de eventos disponibles.
+  eventos: ResultEvento!
+  ## Detalles de un evento por ID.
+  evento(id: String!): ResultEvento!
+  ## Lista de usuarios registrados.
+  usuarios: ResultUsuario
+  ## Información de un usuario por ID.
+  usuario(id: String!): ResultUsuario
+  ## Registros de eventos de un usuario.
+  registrosPorUsuario(usuarioId: String!): ResultRegistroEvento
+  ## Documentos de un usuario.
+  documentosPorUsuario(usuarioId: String!): ResultDocumentoUsuario
+  ## Encuestas de un evento.
+  encuestasPorEvento(eventoId: String!): ResultEncuestaEvento
+  ## Actividades de un usuario en un rango de fechas.
+  actividadesPorUsuario(usuarioId: String!, fechaInicio: String, fechaFin: String): [ActividadUsuario]
+  ## Cancelaciones de registros de un usuario.
+  cancelacionesPorUsuario(usuarioId: String!): ResultCancelacionRegistro
+  ## Confirmaciones de correo de un usuario.
+  confirmacionesPorUsuario(usuarioId: String!): ResultCorreoConfirmacion
+  ## Archivos de un evento.
+  archivosPorEvento(eventoId: String!): ResultArchivoEvento
+  ## Lista de espera de un evento.
+  listaEsperaPorEvento(eventoId: String!): ResultListaEspera
+  ## Configuraciones del sistema.
+  getConfiguracion: ResultConfiguracion
+  estados: ResultEstado!
+  estado(id: Int!): ResultEstado!
+
+  municipios: ResultMunicipio!
+  municipiosPorEstado(estadoId: Int!): ResultMunicipio!
+
+  colonias: ResultColonia!
+  coloniasPorMunicipio(municipioId: Int!): ResultColonia!
+}

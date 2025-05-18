@@ -1,0 +1,42 @@
+{
+  "workbench.colorCustomizations": {
+    "editor.background": "#23272E",
+    "editor.foreground": "#D8DEE9",
+    "editorCursor.foreground": "#A3BE8C",
+    "editor.selectionBackground": "#3B4252",
+    "editor.lineHighlightBackground": "#2E3440",
+    "editorLineNumber.foreground": "#7C818C",
+    "editorIndentGuide.background1": "#434C5E",
+    "editorIndentGuide.activeBackground1": "#B48EAD",
+    "sideBar.background": "#262B33",
+    "sideBar.foreground": "#D8DEE9",
+    "activityBar.border": "#3B4252",
+    "tab.activeBackground": "#3B4252",
+    "tab.activeForeground": "#D8DEE9",
+    "tab.inactiveBackground": "#23272E",
+    "tab.inactiveForeground": "#7C818C",
+    "tab.border": "#3B4252",
+    "menu.background": "#23272E",
+    "menu.foreground": "#D8DEE9",
+    "menu.selectionBackground": "#434C5E",
+    "menu.selectionForeground": "#D8DEE9",
+    "menu.separatorBackground": "#7C818C",
+    "toolbar.activeBackground": "#3B4252",
+    "toolbar.hoverBackground": "#434C5E",
+    "toolbar.hoverOutline": "#A3BE8C"
+  },
+
+  "editor.tokenColorCustomizations": {
+    "comments": "#81A1C1", // Azul claro para comentarios
+    "keywords": "#B48EAD", // Lila suave para palabras clave
+    "strings": "#A3BE8C", // Verde suave para strings
+    "functions": "#EBCB8B", // Amarillo suave para funciones
+    "numbers": "#D08770", // Naranja suave para números
+    "types": "#8FBCBB", // Azul verdoso para tipos
+    "variables": "#D8DEE9" // Gris claro para variables
+  },
+
+  "editor.fontSize": 14,
+  "editor.lineHeight": 22,
+  "editor.fontFamily": "'Fira Code', 'JetBrains Mono', Consolas, 'Courier New', monospace"
+}

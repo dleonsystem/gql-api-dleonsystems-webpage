@@ -1,0 +1,126 @@
+# Input para registrar la participación de un usuario en un evento.
+# Contiene información relevante sobre el evento y el perfil del usuario.
+input RegistroEventoInput {
+  # Identificador único del evento (campo obligatorio).
+  eventoId: ID!
+  # Identificador único del usuario (campo obligatorio).
+  usuarioId: ID
+  # Nombre del usuario.
+  nombre: String
+  # Apellido paterno del usuario.
+  apellidoPaterno: String
+  # Apellido materno del usuario.
+  apellidoMaterno: String
+  # Correo electrónico del usuario.
+  correoElectronico: String
+  # Teléfono de contacto del usuario.
+  telefono: String
+  # CURP del usuario.
+  curp: String
+  # Sector al que pertenece el usuario o su empresa.
+  sector: String
+  # Nivel educativo del usuario.
+  nivelEducativo: String
+  # Subsistema educativo o sector relacionado.
+  subsistema: String
+  # Giro de la empresa del usuario.
+  giroEmpresa: String
+  # Tamaño de la empresa del usuario.
+  tamanioEmpresa: String
+  # Ubicaciones donde opera la empresa.
+  ubicacionesEmpresa: [String]
+  # Nivel de operación de la empresa.
+  nivelOperacionEmpresa: String
+  # Indica si la empresa opera bajo un modelo dual.
+  modeloDual: Boolean
+  # Número de estudiantes involucrados en el modelo dual.
+  numEstudiantesDual: Int
+  # Años de experiencia del usuario o empresa.
+  anosExperiencia: String
+  # Entidad federativa donde se encuentra el usuario o empresa.
+  entidadFederativa: String
+  # Municipio donde se encuentra el usuario o empresa.
+  municipio: String
+}
+
+# Input para gestionar la información de un usuario en el sistema.
+# Incluye datos personales, contacto y credenciales de acceso.
+input UsuarioInput {
+  # Nombre del usuario (campo obligatorio).
+  nombre: String!
+  # Apellido paterno del usuario (campo obligatorio).
+  apellidoPaterno: String!
+  # Apellido materno del usuario (opcional).
+  apellidoMaterno: String
+  # Correo electrónico del usuario (campo obligatorio).
+  correoElectronico: String!
+  # Teléfono de contacto del usuario (opcional).
+  telefono: String!
+  # CURP del usuario (opcional).
+  curp: String
+  # Fecha de nacimiento del usuario (opcional).
+  fechaNacimiento: String
+  # Sexo del usuario representado como un entero (opcional).
+  sexo: Int
+  # Rol asignado al usuario en el sistema (opcional).
+  rol: String
+  # Contraseña del usuario (campo obligatorio).
+  password: String!
+  estado: Int
+  municipio: Int
+  colonia: String
+}
+input ActualizarUsuarioInput {
+  # Identificador único del usuario (campo obligatorio).
+  id: String!
+  # Nombre del usuario (campo obligatorio).
+  nombre: String!
+  # Apellido paterno del usuario (campo obligatorio).
+  apellidoPaterno: String!
+  # Apellido materno del usuario (opcional).
+  apellidoMaterno: String
+  # Correo electrónico del usuario (campo obligatorio).
+  correoElectronico: String!
+  # Teléfono de contacto del usuario (opcional).
+  telefono: String!
+  # CURP del usuario (opcional).
+  curp: String
+  # Fecha de nacimiento del usuario (opcional).
+  fechaNacimiento: String
+  # Sexo del usuario representado como un entero (opcional).
+  sexo: Int
+}
+
+# Input para iniciar sesión en el sistema.
+# Requiere credenciales básicas como correo y contraseña.
+input LoginInput {
+  # Correo electrónico del usuario (campo obligatorio).
+  correoElectronico: String!
+  # Contraseña del usuario (campo obligatorio).
+  password: String!
+}
+
+# Input para registrar documentos asociados a un usuario en un evento.
+# Incluye información del tipo de documento, nombre del archivo y ruta de almacenamiento.
+input DocumentoUsuarioInput {
+  # Identificador del tipo de documento del evento (campo obligatorio).
+  documentoEventoTipoId: String!
+  usuarioId: String! # Identificador del usuario (campo obligatorio).
+  # Nombre del archivo cargado (campo obligatorio).
+  nombreArchivo: String!
+  # Ruta donde se almacena el archivo (campo obligatorio).
+  rutaAlmacenamiento: String!
+  # Versión del documento (opcional).
+  version: Int
+  # Observaciones adicionales sobre el documento (opcional).
+  observaciones: String
+}
+
+# Input para registrar respuestas a encuestas asociadas a eventos.
+# Contiene el identificador de la encuesta y la respuesta proporcionada.
+input RespuestaEncuestaInput {
+  # Identificador único de la encuesta del evento (campo obligatorio).
+  encuestaEventoId: ID!
+  # Respuesta proporcionada por el usuario (campo obligatorio).
+  respuesta: String!
+}

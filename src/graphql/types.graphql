@@ -1,0 +1,350 @@
+# Representa a un usuario registrado en el sistema
+# Este tipo de dato es fundamental para la gestión de usuarios en el sistema.
+# Cumple con los estándares de diseño de datos definidos en el marco de trabajo CMMI.
+type User {
+  id: ID!                 # Identificador único del usuario
+  name: String!           # Nombre del usuario
+  lastname: String!       # Apellido del usuario
+  email: String!          # Correo electrónico del usuario
+  password: String        # Contraseña del usuario (opcional mostrarla, se recomienda omitirla en respuestas)
+  registerDate: String!   # Fecha de registro en formato de texto (ej. ISO 8601)
+}
+
+# Representa una entidad federativa (estado) dentro del sistema
+# Este tipo de dato asegura la consistencia en la representación de entidades geográficas.
+type Entidad {
+  nombre: String!         # Nombre de la entidad (ej. "Ciudad de México")
+  codigo: String!         # Clave o código oficial de la entidad
+}
+
+# Representa una delegación o municipio dentro de una entidad
+# Este tipo de dato permite la correcta asociación entre municipios y entidades federativas.
+type DelegacionMunicipio {
+  nombre: String!         # Nombre de la delegación o municipio (ej. "Tlalpan")
+  codigo: String!         # Código del municipio/delegación
+  codigoEntidad: String!  # Código de la entidad federativa a la que pertenece
+}
+
+# Resultado estándar para operaciones relacionadas con usuarios
+# Este tipo de dato estandariza las respuestas de las operaciones relacionadas con usuarios.
+type ResultUser {
+  status: Boolean!        # Indica si la operación fue exitosa (true) o fallida (false)
+  message: String!        # Mensaje de respuesta para el cliente
+  usuario: Usuario              # Objeto con los datos del usuario (puede ser null si hubo error)
+}
+
+# Resultado estándar para la operación de login/autenticación
+# Este tipo de dato asegura la trazabilidad y claridad en las respuestas de autenticación.
+type ResultToken {
+  status: Boolean!        # Indica si el inicio de sesión fue exitoso
+  message: String!        # Mensaje descriptivo (ej. "Login correcto", "Credenciales inválidas")
+  token: String           # Token de autenticación (ej. JWT), puede ser null si falló el login
+}
+
+# Representa el resultado de crear un registro de un usuario a un evento
+# Este tipo de dato facilita la gestión de registros en eventos, alineado con los procesos definidos.
+type ResultRegistroEvento {
+  status: Boolean!        # Indica si la operación fue exitosa (true) o fallida (false)
+  message: String!        # Mensaje de respuesta para el cliente
+  registros: [RegistroEvento] # Objeto con los datos del registro (puede ser null si hubo error)
+}
+
+type ResultCancelacionRegistro {
+  status: Boolean!        # Indica si la operación fue exitosa (true) o fallida (false)
+  message: String!        # Mensaje de respuesta para el cliente
+  cancelacion: CancelacionRegistro # Objeto con los datos de la cancelación (puede ser null si hubo error)
+}
+
+type ResultDocumentoUsuario {
+  status: Boolean!        # Indica si la operación fue exitosa (true) o fallida (false)
+  message: String!        # Mensaje de respuesta para el cliente
+  documento: DocumentoUsuario # Objeto con los datos del documento (puede ser null si hubo error)
+}
+
+type ResultRespuestaEncuesta {
+  status: Boolean!        # Indica si la operación fue exitosa (true) o fallida (false)
+  message: String!        # Mensaje de respuesta para el cliente
+  respuesta: RespuestaEncuesta # Objeto con los datos de la respuesta (puede ser null si hubo error)
+}
+
+type ResultListaEspera {
+  status: Boolean!        # Indica si la operación fue exitosa (true) o fallida (false)
+  message: String!        # Mensaje de respuesta para el cliente
+  listaEspera: [ListaEspera] # Objeto con los datos de la lista de espera (puede ser null si hubo error)
+}
+
+# Tipos de respuesta personalizados
+# Estos tipos permiten la personalización de las respuestas según las necesidades del sistema.
+type TokenJWT {
+  token: String!
+  usuario: Usuario!
+}
+
+# Representa la respuesta de autenticación
+# Este tipo de dato asegura la claridad y consistencia en las respuestas de autenticación.
+type AuthResponse {
+  status: Boolean!        # Indica si la autenticación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  token: String           # Token de autenticación (puede ser null si falló la autenticación)
+  usuario: Usuario        # Objeto con los datos del usuario autenticado (puede ser null si falló la autenticación)
+}
+# Este tipo de dato asegura la claridad y consistencia en las respuestas de autenticación.
+type UsuarioResponse {
+  status: Boolean!        # Indica si la autenticación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  usuario: Usuario        # Objeto con los datos del usuario autenticado (puede ser null si falló la autenticación)
+}
+type Configuracion {
+  id: Int!             # Identificador único de la configuración
+  llave: String!         # Clave de la configuración (ej. "max_registros")
+  valor: String!          # Valor de la configuración
+  descripcion: String     # Descripción de la configuración (opcional)
+  fechaCreacion: String!  # Fecha de creación de la configuración
+}
+type ResultEvento {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  eventos: [Evento]       # Lista de eventos (puede ser vacía si no hay eventos)
+}
+type ResultUsuario {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  usuarios: [Usuario]     # Lista de usuarios (puede ser vacía si no hay usuarios)
+}
+
+type ResultArchivoEvento {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  archivos: [ArchivoEvento] # Lista de archivos (puede ser vacía si no hay archivos)
+}
+
+type ResultEncuestaEvento {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  encuestas: [EncuestaEvento] # Lista de encuestas (puede ser vacía si no hay encuestas)
+}
+
+type ResultCancelacionRegistro {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  cancelaciones: [CancelacionRegistro] # Lista de cancelaciones (puede ser vacía si no hay cancelaciones)
+}
+
+type ResultConfiguracion {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  configuraciones: [Configuracion] # Objeto con los datos de configuración (puede ser null si hubo error)
+}
+
+type ResultCorreoConfirmacion {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  correos: [CorreoConfirmacion] # Lista de correos (puede ser vacía si no hay correos)
+}
+
+# Representa la respuesta de la operación "Me"
+# Este tipo de dato permite obtener información del usuario autenticado.
+type MeResponse {
+  status: Boolean!        # Indica si la operación fue exitosa
+  message: String!        # Mensaje descriptivo del resultado de la operación
+  user: Usuario           # Objeto con los datos del usuario autenticado
+}
+
+# Representa a un usuario dentro del sistema
+# Este tipo de dato es fundamental para la gestión de usuarios y cumple con los estándares de diseño de datos definidos en el marco CMMI.
+type Usuario {
+  id: String!             # Identificador único del usuario
+  nombre: String!         # Nombre del usuario
+  apellidoPaterno: String!# Apellido paterno del usuario
+  apellidoMaterno: String # Apellido materno del usuario (opcional)
+  correoElectronico: String! # Correo electrónico del usuario
+  telefono: String!        # Teléfono del usuario (opcional)
+  curp: String            # CURP del usuario (Clave Única de Registro de Población)
+  fechaNacimiento: String # Fecha de nacimiento del usuario en formato ISO 8601
+  sexo: Sexo              # Sexo del usuario (opcional)
+  rol: String             # Rol del usuario dentro del sistema
+  estado: Estado          # Entidad federativa del usuario
+  estadoId: Int!          # ID de la entidad federativa del usuario
+  municipioId: Int!       # ID del municipio del usuario
+  municipio: Municipio          # Entidad federativa del usuario
+  eventos: [Evento] # Lista de eventos a los que está registrado el usuario
+}
+
+# Representa un evento dentro del sistema
+# Este tipo de dato asegura la correcta gestión de eventos y su alineación con los procesos definidos.
+type Evento {
+  id: String!             # Identificador único del evento
+  nombre: String!         # Nombre del evento
+  descripcion: String     # Descripción del evento (opcional)
+  fecha: String!          # Fecha del evento en formato ISO 8601
+  hora: String            # Hora del evento (opcional)
+  capacidadMaxima: Int!   # Capacidad máxima de asistentes al evento
+  cupoDisponible: Int!     # Número de lugares disponibles para el evento
+  lugar: String           # Lugar donde se llevará a cabo el evento
+  tipo: String            # Tipo de evento (ej. conferencia, taller)
+  estado: String          # Estado actual del evento (ej. activo, cancelado)
+  urlImagen: String       # URL de la imagen del evento (opcional)
+  destacado: Boolean      # Indica si el evento es destacado
+  modalidad: Modalidad
+}
+
+# Representa el registro de un usuario a un evento
+# Este tipo de dato facilita la trazabilidad y gestión de registros en eventos.
+type RegistroEvento {
+  id: ID!                 # Identificador único del registro
+  usuario: Usuario!       # Usuario que realizó el registro
+  evento: Evento!         # Evento al que se registró el usuario
+  usuarioId: String!     # ID del usuario que realizó el registro
+  eventoId: String!       # ID del evento al que se registró el usuario
+  fechaRegistro: String!  # Fecha en la que se realizó el registro
+  confirmado: Boolean    # Indica si el registro fue confirmado
+  cancelado: Boolean!     # Indica si el registro fue cancelado
+  sector: String          # Sector al que pertenece el usuario (opcional)
+  nivelEducativo: String  # Nivel educativo del usuario (opcional)
+  subsistema: String      # Subsistema educativo del usuario (opcional)
+  giroEmpresa: String     # Giro de la empresa del usuario (opcional)
+  tamanioEmpresa: String  # Tamaño de la empresa del usuario (opcional)
+  ubicacionesEmpresa: [String] # Ubicaciones de la empresa del usuario (opcional)
+  nivelOperacionEmpresa: String # Nivel de operación de la empresa (opcional)
+  modeloDual: Boolean     # Indica si el usuario participa en un modelo dual (opcional)
+  numEstudiantesDual: Int # Número de estudiantes en modelo dual (opcional)
+  anosExperiencia: String # Años de experiencia del usuario (opcional)
+  entidadFederativa: String # Entidad federativa del usuario (opcional)
+  municipio: String       # Municipio del usuario (opcional)
+}
+
+# Representa una lista de espera para un evento
+# Este tipo de dato permite gestionar solicitudes de usuarios cuando el evento ha alcanzado su capacidad máxima.
+type ListaEspera {
+  id: String!             # Identificador único de la solicitud en lista de espera
+  usuario: Usuario!       # Usuario que realizó la solicitud
+  evento: Evento!         # Evento al que se desea asistir
+  fechaSolicitud: String! # Fecha en la que se realizó la solicitud
+  atendido: Boolean!      # Indica si la solicitud ya fue atendida
+}
+
+# Representa un tipo de documento requerido para un evento
+# Este tipo de dato asegura la correcta gestión de documentos asociados a eventos.
+type DocumentoEventoTipo {
+  id: ID!                 # Identificador único del tipo de documento
+  nombreDocumento: String! # Nombre del documento requerido
+  evento: Evento!         # Evento al que está asociado el documento
+  esObligatorio: Boolean! # Indica si el documento es obligatorio
+  extensionesValidas: String! # Extensiones de archivo permitidas (ej. ".pdf, .jpg")
+  tamanoMaximoMB: Int!    # Tamaño máximo permitido para el archivo en MB
+}
+
+# Representa un documento cargado por un usuario
+# Este tipo de dato permite la trazabilidad y gestión de documentos subidos por los usuarios.
+type DocumentoUsuario {
+  id: String!             # Identificador único del documento
+  usuario: Usuario!       # Usuario que cargó el documento
+  documentoEventoTipo: DocumentoEventoTipo! # Tipo de documento asociado
+  nombreArchivo: String!  # Nombre del archivo cargado
+  rutaAlmacenamiento: String! # Ruta donde se almacena el archivo
+  fechaCarga: String!     # Fecha en la que se cargó el documento
+  version: Int!           # Versión del documento (en caso de múltiples cargas)
+  observaciones: String   # Observaciones relacionadas con el documento (opcional)
+}
+
+# Representa una actividad realizada por un usuario
+# Este tipo de dato permite registrar y auditar las operaciones realizadas por los usuarios.
+type ActividadUsuario {
+  id: String!             # Identificador único de la actividad
+  usuario: Usuario!       # Usuario que realizó la actividad
+  fechaHora: String!      # Fecha y hora en la que se realizó la actividad
+  modulo: String!         # Módulo del sistema donde se realizó la actividad
+  tipoOperacion: TipoOperacion! # Tipo de operación realizada
+  descripcion: String!    # Descripción de la actividad
+}
+
+# Representa un correo de confirmación enviado a un usuario
+# Este tipo de dato asegura la trazabilidad de los correos enviados por el sistema.
+type CorreoConfirmacion {
+  id: String!             # Identificador único del correo
+  usuario: Usuario!       # Usuario al que se envió el correo
+  evento: Evento!         # Evento relacionado con el correo
+  fechaEnvio: String!     # Fecha en la que se envió el correo
+  tipoCorreo: TipoCorreo! # Tipo de correo enviado
+  estadoEnvio: String!    # Estado del envío (ej. enviado, fallido)
+  reintentos: Int!        # Número de reintentos realizados en caso de fallo
+}
+
+# Representa la cancelación de un registro a un evento
+# Este tipo de dato permite gestionar y auditar las cancelaciones realizadas por los usuarios.
+type CancelacionRegistro {
+  id: String!             # Identificador único de la cancelación
+  registroEvento: RegistroEvento! # Registro que fue cancelado
+  fechaCancelacion: String! # Fecha en la que se realizó la cancelación
+  motivo: String!         # Motivo de la cancelación
+  canceladoPor: String!   # Usuario o sistema que realizó la cancelación
+}
+
+# Representa un archivo asociado a un evento
+# Este tipo de dato permite la gestión de archivos relacionados con eventos.
+type ArchivoEvento {
+  id: String!             # Identificador único del archivo
+  evento: Evento!         # Evento al que está asociado el archivo
+  nombreArchivo: String!  # Nombre del archivo
+  rutaAlmacenamiento: String! # Ruta donde se almacena el archivo
+  tipoArchivo: TipoArchivo! # Tipo de archivo (ej. imagen, documento)
+  fechaCarga: String!     # Fecha en la que se cargó el archivo
+}
+
+# Representa una encuesta asociada a un evento
+# Este tipo de dato permite la creación y gestión de encuestas para eventos.
+type EncuestaEvento {
+  id: String!             # Identificador único de la encuesta
+  evento: Evento!         # Evento al que está asociada la encuesta
+  pregunta: String!       # Pregunta de la encuesta
+  tipoPregunta: String!   # Tipo de pregunta (ej. abierta, opción múltiple)
+  esObligatoria: Boolean! # Indica si la pregunta es obligatoria
+  orden: Int!             # Orden de la pregunta dentro de la encuesta
+}
+
+# Representa una respuesta a una encuesta
+# Este tipo de dato permite la trazabilidad y análisis de las respuestas de los usuarios.
+type RespuestaEncuesta {
+  id: String!             # Identificador único de la respuesta
+  usuario: Usuario!       # Usuario que respondió la encuesta
+  encuestaEvento: EncuestaEvento! # Encuesta a la que pertenece la respuesta
+  respuesta: String!      # Respuesta proporcionada por el usuario
+  fechaRespuesta: String! # Fecha en la que se proporcionó la respuesta
+}
+
+type Estado {
+  id: Int!
+  codigoEstado: String!
+  nombreEstado: String!
+  municipios: [Municipio!]!
+}
+
+type Municipio {
+  id: Int!
+  codigoMunicipio: String!
+  nombreMunicipio: String!
+  estado: Estado!
+  colonias: [Colonia!]!
+}
+
+type Colonia {
+  id: Int!
+  codigoPostal: String!
+  nombreColonia: String!
+  municipio: Municipio!
+}
+type ResultMunicipio {
+  status: Boolean!
+  message: String!
+  municipios: [Municipio]
+}
+type ResultColonia {
+  status: Boolean!
+  message: String!
+  colonias: [Colonia]!
+}
+type ResultEstado {
+  status: Boolean!
+  message: String!
+  estados: [Estado]
+}

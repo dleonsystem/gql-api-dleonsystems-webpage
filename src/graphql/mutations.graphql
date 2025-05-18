@@ -1,0 +1,20 @@
+type Mutation {
+  ##  Crea un usuario o inicia sesión en el sistema, devolviendo un `AuthResponse`.
+  crearUsuario(input: UsuarioInput!): AuthResponse
+  ## Actualiza la información de un usuario en el sistema, devolviendo un `UsuarioResponse`.
+  actualizarUsuario(input: ActualizarUsuarioInput!): UsuarioResponse
+  ##  Deshabilita un usuario en el sistema, devolviendo un `UsuarioResponse`.
+  deshabilitarUsuario(id: String!): UsuarioResponse
+  ## Inicia sesión en el sistema, devolviendo un `AuthResponse`.
+  login(input: LoginInput!): AuthResponse
+  ## Registra o cancela un usuario en un evento, devolviendo el resultado correspondiente.
+  crearRegistro(input: RegistroEventoInput!): ResultRegistroEvento!
+  ## Cancela un registro de usuario en un evento, devolviendo el resultado correspondiente.
+  cancelarRegistro(registroId: String!, motivo: String!): ResultCancelacionRegistro
+  ##  Carga un documento o responde una encuesta, devolviendo el resultado correspondiente.
+  cargarDocumento(input: DocumentoUsuarioInput!): ResultDocumentoUsuario
+  ## Responde una encuesta, devolviendo el resultado correspondiente.
+  responderEncuesta(input: RespuestaEncuestaInput!): ResultRespuestaEncuesta
+  ## Registra un usuario en la lista de espera de un evento, devolviendo un `ListaEspera`.
+  registrarEnListaEspera(eventoId: String!, usuarioId: String!): ResultListaEspera
+}

@@ -1,0 +1,37 @@
+"""
+Enumeraciones utilizadas para estandarizar valores en el sistema, 
+facilitando la clasificación, validación y gestión de datos. 
+Cumple con las mejores prácticas de diseño bajo el marco CMMI.
+"""
+enum Sexo {
+  PENDIENTE  # Valor por defecto o no especificado.
+  MUJER      # Sexo femenino.
+  HOMBRE     # Sexo masculino.
+}
+
+enum Modalidad {
+  PRESENCIAL  
+  VIRTUAL     
+  HIBRIDA     
+}
+
+enum TipoCorreo {
+  CONFIRMACION   # Validación de acciones.
+  CANCELACION    # Notificación de anulaciones.
+  LISTAESPERA    # Estado en lista de espera.
+  RECORDATORIO   # Alertas o seguimientos.
+}
+
+enum TipoOperacion {
+  ALTA           # Registro de nuevos elementos.
+  EDICION        # Modificación de elementos existentes.
+  CANCELACION    # Eliminación o anulación de elementos.
+  CONFIRMACION   # Validación o aprobación de elementos.
+}
+
+enum TipoArchivo {
+  DOCUMENTO      # Archivos como PDF o Word.
+  AGENDA         # Planificaciones o cronogramas.
+  VIDEO          # Contenido multimedia.
+  CERTIFICADO    # Acreditaciones o validaciones.
+}
