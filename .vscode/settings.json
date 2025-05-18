@@ -1,39 +1,39 @@
 {
   "workbench.colorCustomizations": {
-    "editor.background": "#23272E",
-    "editor.foreground": "#D8DEE9",
-    "editorCursor.foreground": "#A3BE8C",
-    "editor.selectionBackground": "#3B4252",
-    "editor.lineHighlightBackground": "#2E3440",
-    "editorLineNumber.foreground": "#7C818C",
-    "editorIndentGuide.background1": "#434C5E",
-    "editorIndentGuide.activeBackground1": "#B48EAD",
-    "sideBar.background": "#262B33",
-    "sideBar.foreground": "#D8DEE9",
-    "activityBar.border": "#3B4252",
-    "tab.activeBackground": "#3B4252",
-    "tab.activeForeground": "#D8DEE9",
-    "tab.inactiveBackground": "#23272E",
-    "tab.inactiveForeground": "#7C818C",
-    "tab.border": "#3B4252",
-    "menu.background": "#23272E",
-    "menu.foreground": "#D8DEE9",
-    "menu.selectionBackground": "#434C5E",
-    "menu.selectionForeground": "#D8DEE9",
-    "menu.separatorBackground": "#7C818C",
-    "toolbar.activeBackground": "#3B4252",
-    "toolbar.hoverBackground": "#434C5E",
-    "toolbar.hoverOutline": "#A3BE8C"
+    "editor.background": "#0F1A0F", // Verde oscuro Matrix
+    "editor.foreground": "#C8FFC8", // Verde claro Matrix
+    "editorCursor.foreground": "#00FF41", // Verde neón Matrix
+    "editor.selectionBackground": "#133813", // Verde más intenso para selección
+    "editor.lineHighlightBackground": "#1A2D1A", // Verde medio para línea actual
+    "editorLineNumber.foreground": "#39FF14", // Verde Matrix para números de línea
+    "editorIndentGuide.background1": "#1B2B1B",
+    "editorIndentGuide.activeBackground1": "#00FF41",
+    "sideBar.background": "#101C10",
+    "sideBar.foreground": "#C8FFC8",
+    "activityBar.border": "#133813",
+    "tab.activeBackground": "#133813",
+    "tab.activeForeground": "#C8FFC8",
+    "tab.inactiveBackground": "#0F1A0F",
+    "tab.inactiveForeground": "#39FF14",
+    "tab.border": "#133813",
+    "menu.background": "#0F1A0F",
+    "menu.foreground": "#C8FFC8",
+    "menu.selectionBackground": "#1A2D1A",
+    "menu.selectionForeground": "#00FF41",
+    "menu.separatorBackground": "#39FF14",
+    "toolbar.activeBackground": "#133813",
+    "toolbar.hoverBackground": "#1A2D1A",
+    "toolbar.hoverOutline": "#00FF41"
   },
 
   "editor.tokenColorCustomizations": {
-    "comments": "#81A1C1", // Azul claro para comentarios
-    "keywords": "#B48EAD", // Lila suave para palabras clave
-    "strings": "#A3BE8C", // Verde suave para strings
-    "functions": "#EBCB8B", // Amarillo suave para funciones
-    "numbers": "#D08770", // Naranja suave para números
-    "types": "#8FBCBB", // Azul verdoso para tipos
-    "variables": "#D8DEE9" // Gris claro para variables
+    "comments": "#4BFF4B", // Verde claro para comentarios
+    "keywords": "#00FF41", // Verde neón para palabras clave
+    "strings": "#C8FFC8", // Verde muy claro para strings
+    "functions": "#FFD700", // Amarillo Matrix para funciones
+    "numbers": "#FF8C00", // Naranja Matrix para números
+    "types": "#00CED1", // Cian Matrix para tipos
+    "variables": "#C8FFC8" // Verde claro para variables
   },
 
   "editor.fontSize": 14,
