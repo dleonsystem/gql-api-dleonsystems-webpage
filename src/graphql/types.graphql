@@ -333,6 +333,7 @@ type Colonia {
   nombreColonia: String!
   municipio: Municipio!
 }
+
 type ResultMunicipio {
   status: Boolean!
   message: String!

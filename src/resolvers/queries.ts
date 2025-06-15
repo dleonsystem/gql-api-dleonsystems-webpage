@@ -1,7 +1,85 @@
 import JWT from "../lib/jwt";
+import { Db } from 'mongodb'; // <-- IMPORTANTE: Importar el tipo Db
 
 export const queryResolvers = {
     Query: {
+         /**
+         * Consulta de testimonios desde MongoDB
+         */
+        async testimonials(_: void, __: any, { mongo }: { mongo: Db }): Promise<any> {
+            try {
+                // Asegúrate de que el nombre de la colección coincida
+                const collection = mongo.collection('testimonials'); 
+                const testimonialsData = await collection.find({}).toArray();
+                return testimonialsData;
+            } catch (error) {
+                console.error('❌ Error al consultar testimonios:', error);
+                // Puedes retornar un array vacío o lanzar un error de GraphQL
+                return [];
+            }
+        },
+
+        /**
+         * Consulta de casos de éxito desde MongoDB
+         */
+        async successCases(_: void, __: any, { mongo }: { mongo: Db }): Promise<any> {
+            try {
+                // Asumiendo que los casos de éxito están en una colección 'success_cases'
+                // y dentro de la propiedad 'es'
+                const collection = mongo.collection('successCases'); 
+                const data = await collection.findOne({}); // Obtiene el primer documento
+
+                // Devuelve el array que está bajo la clave 'es'
+                return data ? data.es : []; 
+            } catch (error) {
+                console.error('❌ Error al consultar casos de éxito:', error);
+                return [];
+            }
+        },
+          /**
+         * Consulta del portafolio desde MongoDB
+         */
+        async portfolio(_: void, { language }: { language: string }, { mongo }: { mongo: Db }): Promise<any> {
+            try {
+                // El nombre de la colección debe ser 'portfolio'
+                const data = await mongo.collection('portfolio').findOne({});
+                // Devuelve el array bajo la clave del idioma solicitado ('es' o 'en')
+                return data && data[language] ? data[language] : [];
+            } catch (error) {
+                console.error('❌ Error al consultar el portafolio:', error);
+                return [];
+            }
+        },
+
+        /**
+         * Consulta de servicios desde MongoDB
+         */
+        async services(_: void, { language }: { language: string }, { mongo }: { mongo: Db }): Promise<any> {
+            try {
+                // El nombre de la colección debe ser 'services'
+                const data = await mongo.collection('services').findOne({});
+                // Devuelve el objeto completo bajo la clave del idioma solicitado
+                return data && data[language] ? data[language] : null;
+            } catch (error) {
+                console.error('❌ Error al consultar los servicios:', error);
+                return null;
+            }
+        },
+
+        /**
+         * Consulta del blog desde MongoDB
+         */
+        async blog(_: void, { language }: { language: string }, { mongo }: { mongo: Db }): Promise<any> {
+            try {
+                // El nombre de la colección debe ser 'blog'
+                const data = await mongo.collection('blog').findOne({});
+                // Devuelve el array bajo la clave del idioma solicitado
+                return data && data[language] ? data[language] : [];
+            } catch (error) {
+                console.error('❌ Error al consultar el blog:', error);
+                return [];
+            }
+        },
         /**
          * Consulta de configuración
          */

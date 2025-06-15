@@ -7,12 +7,15 @@ import bodyParser from 'body-parser';
 import { typeDefs } from './schema/loadSchema';
 import { resolvers } from './resolvers';
 import { ps } from './config/db-pg';
+import { connectToMongo } from './config/db-mongo'; // <-- 1. IMPORTAR
+import { Db } from 'mongodb';                       // <-- 2. IMPORTAR TIPO
 
 /**
  * Interfaz del contexto compartido entre resolvers
  */
 interface MyContext {
   ps: typeof ps;                         // Conexión a PostgreSQL
+  mongo: Db; // <-- 3. AÑADIR AL CONTEXTO
   token: string | null;                 // Token JWT (Authorization)
   clientIP: string | null;              // IP del cliente (desde proxy o request)
   recaptchaToken: string | null;        // Token enviado por encabezado personalizado
@@ -21,6 +24,9 @@ interface MyContext {
 // 🔧 Función principal para iniciar el servidor
 const startServer = async () => {
   const app = express();
+
+  const mongoDb = await connectToMongo(); // <-- 4. CONECTAR ANTES DE INICIAR
+
 
   // Aumentar límites de tamaño de solicitudes
   app.use(bodyParser.json({ limit: '20mb' })); // ❗ Evaluar si el límite de 20mb es necesario o excesivo
@@ -53,6 +59,7 @@ const startServer = async () => {
         // ❗ Agregar logging o manejo de errores si algún dato del contexto es inválido
         return {
           ps,
+          mongo: mongoDb, // <-- 5. PASAR LA CONEXIÓN AL CONTEXTO
           token,
           clientIP,
           recaptchaToken

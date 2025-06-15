@@ -1,0 +1,183 @@
+# src/graphql/mongo.graphql
+
+type Testimonial {
+  nombre: String
+  proyecto: String
+  comentario: String
+  estrellas: Int
+  avatar: String
+}
+
+type SuccessCase {
+  id: Int
+  clave: String
+  nombre: String
+  cliente: String
+  periodo: String
+  rol: String
+  stack: [String]
+  resultados: String
+  usuariosImpactados: String
+  integraciones: [String]
+  sector: String
+}
+
+# Añadimos las nuevas queries a la raíz
+extend type Query {
+  """
+  Obtiene la lista de testimonios desde MongoDB.
+  """
+  testimonials: [Testimonial]
+
+  """
+  Obtiene la lista de casos de éxito desde MongoDB.
+  """
+  successCases: [SuccessCase]
+}
+# src/graphql/mongo.graphql
+
+# --- Tipos y Queries de la respuesta anterior ---
+type Testimonial {
+  nombre: String
+  proyecto: String
+  comentario: String
+  estrellas: Int
+  avatar: String
+}
+
+type SuccessCase {
+  id: Int
+  clave: String
+  nombre: String
+  cliente: String
+  periodo: String
+  rol: String
+  stack: [String]
+  resultados: String
+  usuariosImpactados: String
+  integraciones: [String]
+  sector: String
+}
+
+# --- NUEVAS DEFINICIONES PARA PORTFOLIO ---
+type PortfolioItem {
+  titulo: String
+  descripcion: String
+  imagen: String
+  sector: String
+  enlaceDemo: String
+}
+
+# --- NUEVAS DEFINICIONES PARA SERVICIOS (servicesv2.data.json) ---
+
+type ServicePackage {
+  tipo: String
+  precio: Float
+  precioMXN: Float
+  duracion: String
+  caracteristicas: [String]
+}
+
+type Service {
+  id: String
+  nombre: String
+  descripcion: String
+  paquetes: [ServicePackage]
+  plataformas: [String]
+}
+
+type ServiceCategory {
+  id: String
+  icono: String
+  nombre: String
+  descripcion: String
+  precioBase: String
+  link: String
+  eventoGA: String
+  imagen: String
+  servicios: [Service]
+}
+
+type SpecialService {
+  id: String
+  nombre: String
+  descripcion: String
+  precio: Float
+  precioMXN: Float
+  duracion: String
+  plataformas: [String]
+  eventoGA: String
+}
+
+type Bundle {
+  id: String
+  nombre: String
+  descripcion: String
+  precio: Float
+  precioMXN: Float
+  duracion: String
+  incluye: [String]
+  plataformas: [String]
+  eventoGA: String
+}
+
+type CustomProject {
+  id: String
+  nombre: String
+  descripcion: String
+  precio: Float
+  precioMXN: Float
+  duracion: String
+  plataformas: [String]
+  eventoGA: String
+}
+
+type ServicesData {
+  categorias: [ServiceCategory]
+  serviciosEspeciales: [SpecialService]
+  bundles: [Bundle]
+  proyectosPersonalizados: [CustomProject]
+}
+
+
+# --- NUEVAS DEFINICIONES PARA BLOG ---
+type BlogPost {
+  id: Int
+  title: String
+  image: String
+  excerpt: String
+  content: String
+  alt: String
+}
+
+
+# --- EXTENDIENDO EL TIPO QUERY ---
+extend type Query {
+  """
+  Obtiene la lista de testimonios desde MongoDB.
+  """
+  testimonials: [Testimonial]
+
+  """
+  Obtiene la lista de casos de éxito desde MongoDB.
+  """
+  successCases: [SuccessCase]
+
+  """
+  Obtiene los datos del portafolio desde MongoDB.
+  Acepta un argumento de idioma ('es' o 'en').
+  """
+  portfolio(language: String = "es"): [PortfolioItem]
+
+  """
+  Obtiene todos los datos de servicios desde MongoDB.
+  Acepta un argumento de idioma ('es' o 'en').
+  """
+  services(language: String = "es"): ServicesData
+
+  """
+  Obtiene las entradas del blog desde MongoDB.
+  Acepta un argumento de idioma ('es' o 'en').
+  """
+  blog(language: String = "es"): [BlogPost]
+}
