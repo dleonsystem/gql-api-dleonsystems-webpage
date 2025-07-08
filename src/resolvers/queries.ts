@@ -72,9 +72,10 @@ export const queryResolvers = {
         async blog(_: void, { language }: { language: string }, { mongo }: { mongo: Db }): Promise<any> {
             try {
                 // El nombre de la colección debe ser 'blog'
-                const data = await mongo.collection('blog').findOne({});
+                const data = await mongo.collection('blog').find({}).toArray();
                 // Devuelve el array bajo la clave del idioma solicitado
-                return data && data[language] ? data[language] : [];
+                const blogData = data[0];
+                return blogData && blogData[language] ? blogData[language] : [];
             } catch (error) {
                 console.error('❌ Error al consultar el blog:', error);
                 return [];

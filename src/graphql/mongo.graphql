@@ -148,6 +148,7 @@ type BlogPost {
   excerpt: String
   content: String
   alt: String
+  url: String
 }
 
 
