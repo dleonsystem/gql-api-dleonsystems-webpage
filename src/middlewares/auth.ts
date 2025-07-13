@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = process.env.JWT_SECRET || 'secreto_super_seguro';
+const SECRET_KEY = process.env.JWT_SECRET as string;
 
 /**
  * Middleware para validar y decodificar el token JWT
