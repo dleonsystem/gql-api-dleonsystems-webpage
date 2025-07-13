@@ -2,13 +2,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 const environments = dotenv.config({
-  path: path.resolve(__dirname, '../../src/.env'),
+  path: path.resolve(__dirname, '../../.env'),
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  if (environments.error) {
-    throw environments.error;
-  }
-}
+// Ignore missing .env file in non-production environments
 
 export default environments;

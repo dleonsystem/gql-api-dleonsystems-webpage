@@ -1,9 +1,7 @@
-import JWT from '../src/lib/jwt';
+process.env.JWT_SECRET = 'testsecret';
+process.env.DURACIONTOKEN = '3600';
 
-beforeAll(() => {
-  process.env.SECRET = 'testsecret';
-  process.env.DURACIONTOKEN = '3600';
-});
+import JWT from '../src/lib/jwt';
 
 describe('JWT helper', () => {
   it('signs and verifies tokens', () => {
