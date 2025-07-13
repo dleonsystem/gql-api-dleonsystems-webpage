@@ -1,6 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-const express = require('express'); // ❗ Reemplazar `require` con `import` por consistencia
+import express from 'express'; // ❗ Reemplazar `require` con `import` por consistencia
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
