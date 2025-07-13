@@ -1,11 +1,12 @@
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-const express = require('express'); // ❗ Reemplazar `require` con `import` por consistencia
+import express from 'express'; // ❗ Reemplazar `require` con `import` por consistencia
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
 import { typeDefs } from './schema/loadSchema';
 import { resolvers } from './resolvers';
+import logger from './lib/logger';
 import { ps } from './config/db-pg';
 import { connectToMongo } from './config/db-mongo'; // <-- 1. IMPORTAR
 import { Db } from 'mongodb';                       // <-- 2. IMPORTAR TIPO
@@ -23,14 +24,20 @@ interface MyContext {
 
 // 🔧 Función principal para iniciar el servidor
 const startServer = async () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+
   const app = express();
 
   const mongoDb = await connectToMongo(); // <-- 4. CONECTAR ANTES DE INICIAR
 
 
-  // Aumentar límites de tamaño de solicitudes
-  app.use(bodyParser.json({ limit: '20mb' })); // ❗ Evaluar si el límite de 20mb es necesario o excesivo
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  // Aumentar límites de tamaño de solicitudes usando variables de entorno
+  const jsonLimit = process.env.JSON_LIMIT || '20mb';
+  const urlencodedLimit = process.env.URLENCODED_LIMIT || '50mb';
+  app.use(bodyParser.json({ limit: jsonLimit }));
+  app.use(bodyParser.urlencoded({ limit: urlencodedLimit, extended: true }));
 
   // Confía en proxies (para obtener IP real si hay load balancer)
   app.set('trust proxy', true); // ✅ Buen uso para setups detrás de un proxy
@@ -70,12 +77,12 @@ const startServer = async () => {
 
   // 🚀 Iniciar servidor en puerto XXXX
   const port = process.env.PORT || 5005; // ✅ Extraer el puerto a una constante para mayor claridad
-  app.listen(port, () => {
-    console.log(`🚀 Servidor listo en http://localhost:${port}/graphql`);
-  });
+    app.listen(port, () => {
+      logger.info(`🚀 Servidor listo en http://localhost:${port}/graphql`);
+    });
 };
 
 // Manejo de errores global: Atrapar errores que puedan ocurrir durante el inicio del servidor
 startServer().catch((error) => {
-  console.error('❌ Error al iniciar el servidor:', error);
+  logger.error('❌ Error al iniciar el servidor:', error);
 });

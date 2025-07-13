@@ -1,5 +1,6 @@
 import { RecaptchaEnterpriseServiceClient } from '@google-cloud/recaptcha-enterprise';
 import dotenv from 'dotenv';
+import logger from '../lib/logger';
 dotenv.config();
 
 export async function verificarTokenReCaptcha(token: string): Promise<boolean> {
@@ -27,18 +28,18 @@ export async function verificarTokenReCaptcha(token: string): Promise<boolean> {
     const score = response.riskAnalysis?.score ?? 0;
 
     if (!valid) {
-      console.error('Token inválido:', response.tokenProperties?.invalidReason);
+      logger.error('Token inválido:', response.tokenProperties?.invalidReason);
       return false;
     }
 
     if (action !== expectedAction && action !== expectedAction2) {
-      console.warn(`Acción esperada "${expectedAction}" o "${expectedAction2}", pero se recibió: "${action}"`);
+      logger.warn(`Acción esperada "${expectedAction}" o "${expectedAction2}", pero se recibió: "${action}"`);
       return false;
     }
 
     return score >= 0.5;
   } catch (err) {
-    console.error('Error en evaluación reCAPTCHA Enterprise:', err);
+    logger.error('Error en evaluación reCAPTCHA Enterprise:', err);
     return false;
   }
 }
