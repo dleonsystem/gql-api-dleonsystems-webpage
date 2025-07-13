@@ -1,6 +1,7 @@
 // src/lib/mails.ts
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import logger from './logger';
 
 dotenv.config();
 
@@ -25,8 +26,8 @@ export const enviarCorreo = async (to: string, subject: string, text: string) =>
   try {
     const result = await transporter.sendMail(mailOptions);
     return result;
-  } catch (error) {
-    console.error('❌ Error al enviar correo:', error);
+    } catch (error) {
+      logger.error('❌ Error al enviar correo:', error);
     throw error;
   }
 };

@@ -1,5 +1,6 @@
 import JWT from "../lib/jwt";
 import { Db } from 'mongodb'; // <-- IMPORTANTE: Importar el tipo Db
+import logger from '../lib/logger';
 
 export const queryResolvers = {
     Query: {
@@ -13,7 +14,7 @@ export const queryResolvers = {
                 const testimonialsData = await collection.find({}).toArray();
                 return testimonialsData;
             } catch (error) {
-                console.error('❌ Error al consultar testimonios:', error);
+                logger.error('❌ Error al consultar testimonios:', error);
                 // Puedes retornar un array vacío o lanzar un error de GraphQL
                 return [];
             }
@@ -32,7 +33,7 @@ export const queryResolvers = {
                 // Devuelve el array que está bajo la clave 'es'
                 return data ? data.es : []; 
             } catch (error) {
-                console.error('❌ Error al consultar casos de éxito:', error);
+                logger.error('❌ Error al consultar casos de éxito:', error);
                 return [];
             }
         },
@@ -46,7 +47,7 @@ export const queryResolvers = {
                 // Devuelve el array bajo la clave del idioma solicitado ('es' o 'en')
                 return data && data[language] ? data[language] : [];
             } catch (error) {
-                console.error('❌ Error al consultar el portafolio:', error);
+                logger.error('❌ Error al consultar el portafolio:', error);
                 return [];
             }
         },
@@ -61,7 +62,7 @@ export const queryResolvers = {
                 // Devuelve el objeto completo bajo la clave del idioma solicitado
                 return data && data[language] ? data[language] : null;
             } catch (error) {
-                console.error('❌ Error al consultar los servicios:', error);
+                logger.error('❌ Error al consultar los servicios:', error);
                 return null;
             }
         },
@@ -77,7 +78,7 @@ export const queryResolvers = {
                 const blogData = data[0];
                 return blogData && blogData[language] ? blogData[language] : [];
             } catch (error) {
-                console.error('❌ Error al consultar el blog:', error);
+                logger.error('❌ Error al consultar el blog:', error);
                 return [];
             }
         },
@@ -104,7 +105,7 @@ export const queryResolvers = {
                     configuraciones
                 };
             } catch (error) {
-                console.error('❌ Error al consultar configuración:', error);
+                logger.error('❌ Error al consultar configuración:', error);
                 return {
                     status: false,
                     message: 'Error al consultar configuración',
@@ -146,7 +147,7 @@ export const queryResolvers = {
                     eventos
                 }
             } catch (error) {
-                console.error('❌ Error en resolver eventos:', error);
+                logger.error('❌ Error en resolver eventos:', error);
 
                 return {
                     status: false,
@@ -183,7 +184,7 @@ export const queryResolvers = {
             FROM "Evento"
             WHERE "Oid" = $1 AND "GCRecord" IS NULL
           `, [args.id]);
-                if (!evento) console.warn('⚠️ Evento no encontrado:', args.id);
+                if (!evento) logger.warn('⚠️ Evento no encontrado:', args.id);
 
                 return {
                     status: true,
@@ -191,7 +192,7 @@ export const queryResolvers = {
                     eventos: [evento]
                 }
             } catch (error) {
-                console.error('❌ Error al obtener evento por ID:', error);
+                logger.error('❌ Error al obtener evento por ID:', error);
 
                 return {
                     status: false,
@@ -236,7 +237,7 @@ export const queryResolvers = {
                     usuarios
                 }
             } catch (error) {
-                console.error('❌ Error al consultar usuarios:', error);
+                logger.error('❌ Error al consultar usuarios:', error);
                 return {
                     status: false,
                     message: 'Error al consultar usuarios',
@@ -268,7 +269,7 @@ export const queryResolvers = {
                     registros
                 }
             } catch (error) {
-                console.error('❌ Error al consultar registros del usuario:', error);
+                logger.error('❌ Error al consultar registros del usuario:', error);
                 return {
                     status: false,
                     message: 'Error al consultar registros del usuario',
@@ -304,7 +305,7 @@ export const queryResolvers = {
                     cancelaciones
                 }
             } catch (error) {
-                console.error('❌ Error al consultar cancelaciones del usuario:', error);
+                logger.error('❌ Error al consultar cancelaciones del usuario:', error);
                 return {
                     status: false,
                     message: 'Error al consultar cancelaciones del usuario',
@@ -336,7 +337,7 @@ export const queryResolvers = {
                     archivos
                 };
             } catch (error) {
-                console.error('Error en archivosPorEvento:', error);
+                logger.error('Error en archivosPorEvento:', error);
                 return {
                     status: false,
                     message: 'Error al consultar archivos del evento',
@@ -368,7 +369,7 @@ export const queryResolvers = {
                     documentos
                 }
             } catch (error) {
-                console.error('❌ Error al consultar documentos del usuario:', error);
+                logger.error('❌ Error al consultar documentos del usuario:', error);
                 return {
                     status: false,
                     message: 'Error al consultar documentos del usuario',
@@ -432,7 +433,7 @@ export const queryResolvers = {
                 };
 
             } catch (error) {
-                console.error('Error en listaEsperaPorEvento:', error);
+                logger.error('Error en listaEsperaPorEvento:', error);
                 return {
                     status: false,
                     message: 'Error al consultar la lista de espera',
@@ -471,7 +472,7 @@ export const queryResolvers = {
                     usuarios: [usuario]
                 }
             } catch (error) {
-                console.error('Error en usuario:', error);
+                logger.error('Error en usuario:', error);
                 return {
                     status: false,
                     message: 'Error al consultar el usuario',
@@ -485,7 +486,7 @@ export const queryResolvers = {
                 const estados = await ps.manyOrNone('SELECT id, "NombreEstado" as "nombreEstado", "CodigoEstado" as "codigoEstado" FROM "Estados" ORDER BY "NombreEstado"');
                 return { status: true, message: "Resultado de estados", estados };
             } catch (error) {
-                console.error('Error en estados:', error);
+                logger.error('Error en estados:', error);
                 return {
                     status: false,
                     message: 'Error al consultar estados',
@@ -499,7 +500,7 @@ export const queryResolvers = {
                 const estado = await ps.oneOrNone('SELECT id, "NombreEstado" as "nombreEstado", "CodigoEstado" as "codigoEstado" FROM "Estados" WHERE id = $1', [id]);
                 return { status: true, message: "Resultado de estados", estados: [estado] };
             } catch (error) {
-                console.error('Error en estado:', error);
+                logger.error('Error en estado:', error);
                 return {
                     status: false,
                     message: 'Error al consultar estado',
@@ -513,7 +514,7 @@ export const queryResolvers = {
                 const municipios = await ps.any('SELECT id, "CodigoMunicipio" as "codigoMunicipio", "NombreMunicipio" as "nombreMunicipio", "EstadoId" as "estadoId" FROM "Municipios" ORDER BY "NombreMunicipio"');
                 return { status: true, message: "Resultado de municipios", municipios };
             } catch (error) {
-                console.error('Error en municipios:', error);
+                logger.error('Error en municipios:', error);
                 return {
                     status: false,
                     message: 'Error al consultar municipios',
@@ -532,7 +533,7 @@ export const queryResolvers = {
                     status: true, message: "Resultado de municipios", municipios
                 };
             } catch (error) {
-                console.error('Error en municipiosPorEstado:', error);
+                logger.error('Error en municipiosPorEstado:', error);
                 return {
                     status: false,
                     message: 'Error al consultar municipios por estado',
@@ -546,7 +547,7 @@ export const queryResolvers = {
                 const colonias = await ps.any('SELECT id, "CodigoPostal" as "codigoPostal", "NombreColonia", as "nombreColonia", "MunicipioId" as "municipioId" FROM "Colonias" ORDER BY "NombreColonia"');
                 return { status: true, message: "Resultado de colonias", colonias };
             } catch (error) {
-                console.error('Error en colonias:', error);
+                logger.error('Error en colonias:', error);
                 return {
                     status: false,
                     message: 'Error al consultar colonias',
@@ -565,7 +566,7 @@ export const queryResolvers = {
                     status: true, message: "Resultado de colonias", colonias
                 };
             } catch (error) {
-                console.error('Error en coloniasPorMunicipio:', error);
+                logger.error('Error en coloniasPorMunicipio:', error);
                 return {
                     status: false,
                     message: 'Error al consultar colonias por municipio',
