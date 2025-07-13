@@ -1,4 +1,5 @@
 import { connectionString } from '../config/db-pg';
+import logger from '../lib/logger';
 export const typeResolvers = {
   Evento: {
     async cupoDisponible(
@@ -17,7 +18,7 @@ SELECT COUNT(*) as "inscritos" FROM "RegistroEvento" WHERE "Evento" = $1 AND "Ca
           parseInt(parent.capacidadMaxima, 10) - parseInt(cupo.inscritos, 10)
         );
       } catch (error) {
-        console.error('Error fetching cupoDisponible:', error);
+        logger.error('Error fetching cupoDisponible:', error);
         throw new Error('Error fetching cupoDisponible');
       }
     },
@@ -40,7 +41,7 @@ ORDER BY "Fecha" DESC
         );
         return eventos;
       } catch (error) {
-        console.error('Error fetching eventos:', error);
+        logger.error('Error fetching eventos:', error);
         throw new Error('Error fetching eventos');
       }
     },
@@ -53,7 +54,7 @@ SELECT id, "NombreEstado" as "nombreEstado", "CodigoEstado" as "codigoEstado" FR
         );
         return estado;
       } catch (error) {
-        console.error('Error fetching estado:', error);
+        logger.error('Error fetching estado:', error);
         throw new Error('Error fetching estado');
       }
     },
@@ -66,7 +67,7 @@ SELECT id, "NombreMunicipio" as "nombreMunicipio", "CodigoMunicipio" as "codigoM
         );
         return municipio;
       } catch (error) {
-        console.error('Error fetching municipio:', error);
+        logger.error('Error fetching municipio:', error);
         throw new Error('Error fetching municipio');
       }
     },
@@ -86,7 +87,7 @@ WHERE "Oid" = $1
         );
         return evento;
       } catch (error) {
-        console.error('Error fetching evento:', error);
+        logger.error('Error fetching evento:', error);
         throw new Error('Error fetching evento');
       }
     },
@@ -110,7 +111,7 @@ WHERE "Oid" = $1
         );
         return usuario;
       } catch (error) {
-        console.error('Error fetching usuario:', error);
+        logger.error('Error fetching usuario:', error);
         throw new Error('Error fetching usuario');
       }
     },
@@ -123,7 +124,7 @@ WHERE "Oid" = $1
           [parent.id]
         );
       } catch (error) {
-        console.error('Error fetching municipios:', error);
+        logger.error('Error fetching municipios:', error);
         throw new Error('Error fetching municipios');
       }
     },
@@ -137,7 +138,7 @@ WHERE "Oid" = $1
           [parent.EstadoId]
         );
       } catch (error) {
-        console.error('Error fetching estado:', error);
+        logger.error('Error fetching estado:', error);
         throw new Error('Error fetching estado');
       }
     },
@@ -148,7 +149,7 @@ WHERE "Oid" = $1
           [parent.id]
         );
       } catch (error) {
-        console.error('Error fetching colonias:', error);
+        logger.error('Error fetching colonias:', error);
         throw new Error('Error fetching colonias');
       }
     },
@@ -161,7 +162,7 @@ WHERE "Oid" = $1
           [parent.MunicipioId]
         );
       } catch (error) {
-        console.error('Error fetching municipio:', error);
+        logger.error('Error fetching municipio:', error);
         throw new Error('Error fetching municipio');
       }
     },
