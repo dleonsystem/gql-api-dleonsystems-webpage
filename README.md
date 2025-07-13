@@ -1,27 +1,45 @@
 # gql-api-dleonsystems-webpage
 
+GraphQL API for the dleonsystems webpage.
+
 ## Setup
 
 1. Install dependencies:
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 2. Copy the example environment file and adjust the values:
-   ```bash
-   cp .env.example .env
-   cp .env.example src/.env  # needed so constants load the variables
-   ```
+    ```bash
+    cp .env.example .env
+    cp .env.example src/.env  # needed so constants load the variables
+    ```
 3. Build the project:
-   ```bash
-   npm run build
-   ```
+    ```bash
+    npm run build
+    ```
 4. Start the server:
-   ```bash
-   npm start       # run compiled code
-   npm run start:dev  # watch mode with nodemon
-   ```
+    ```bash
+    npm start         # run compiled code
+    npm run start:dev # watch mode with nodemon
+    ```
+
+## Logging
+
+Logs are controlled by a `LOG_LEVEL` environment variable. Valid levels are
+`error`, `warn`, `info` and `debug` (default is `info`).
+
+## Running tests
+
+Install dependencies and run the test suite using:
+
+```bash
+npm install
+npm test
+```
 
 ## Environment variables
+
+Create a `.env` file based on `.env.example` and adjust the values as needed.
 
 | Variable                | Description                                |
 |-------------------------|--------------------------------------------|
@@ -45,4 +63,8 @@
 | `SMTP_PORT`             | SMTP server port.                          |
 | `SMTP_USER`             | SMTP user account.                         |
 | `SMTP_PASS`             | SMTP user password.                        |
+| `JSON_LIMIT`            | Max size accepted by `bodyParser.json`. Defaults to `20mb`. |
+| `URLENCODED_LIMIT`      | Limit for `bodyParser.urlencoded`. Defaults to `50mb`.      |
+| `LOG_LEVEL`             | Logging level (`error`, `warn`, `info`, `debug`).           |
 
+Additional variables such as database or mail credentials may be required depending on your setup. Review the source code for the complete list.
