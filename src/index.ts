@@ -23,6 +23,10 @@ interface MyContext {
 
 // 🔧 Función principal para iniciar el servidor
 const startServer = async () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+
   const app = express();
 
   const mongoDb = await connectToMongo(); // <-- 4. CONECTAR ANTES DE INICIAR
