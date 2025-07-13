@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import logger from '../lib/logger';
 
 const SECRET_KEY = process.env.JWT_SECRET as string;
 
@@ -18,7 +19,7 @@ export const authMiddleware = async ({ req }: { req: any }) => {
 
     try {
         const decoded: any = jwt.verify(token.replace('Bearer ', ''), SECRET_KEY);
-        console.log({
+        logger.debug({
             usuarioId: decoded.usuarioId,
             rol: decoded.rol,
             db: req.db
@@ -29,7 +30,7 @@ export const authMiddleware = async ({ req }: { req: any }) => {
             db: req.db
         };
     } catch (error) {
-        console.error('Error validando token JWT:', error);
+        logger.error('Error validando token JWT:', error);
         return { usuarioId: null, rol: null, db: req.db };
     }
 };

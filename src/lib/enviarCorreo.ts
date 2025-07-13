@@ -3,6 +3,7 @@ import axios from 'axios';
 import { renderCorreoRegistro } from '../templates/renderCorreo';
 import { renderCorreoCancelacion } from '../templates/cancelacionCorreo';
 import { renderCorreoListaEspera } from '../templates/listaEsperaCorreo';
+import logger from './logger';
 
 export async function enviarCorreoRegistro(userCheck: any) {
     try {
@@ -25,11 +26,11 @@ export async function enviarCorreoRegistro(userCheck: any) {
                 headers: { 'Content-Type': 'application/json' },
             }
         );
-        console.log('Correo enviado:', response.data);
+        logger.info('Correo enviado:', response.data);
         return response.data;
 
     } catch (err) {
-        console.error('❌ Error al enviar correo:', err);
+        logger.error('❌ Error al enviar correo:', err);
         throw new Error('Fallo en el envío del correo de confirmación');
     }
 }
@@ -55,11 +56,11 @@ export async function enviarCorreoCancelacion(userCheck: any) {
                 headers: { 'Content-Type': 'application/json' },
             }
         );
-        console.log('Correo enviado:', await response.data);
+        logger.info('Correo enviado:', await response.data);
         return response.data;
 
     } catch (err) {
-        console.error('❌ Error al enviar correo:', err);
+        logger.error('❌ Error al enviar correo:', err);
         throw new Error('Fallo en el envío del correo de confirmación');
     }
 }
@@ -85,11 +86,11 @@ export async function enviarCorreoListaEspera(userCheck: any) {
                 headers: { 'Content-Type': 'application/json' },
             }
         );
-        console.log('Correo enviado:', response.data);
+        logger.info('Correo enviado:', response.data);
         return response.data;
 
     } catch (err) {
-        console.error('❌ Error al enviar correo:', err);
+        logger.error('❌ Error al enviar correo:', err);
         throw new Error('Fallo en el envío del correo de confirmación');
     }
 }

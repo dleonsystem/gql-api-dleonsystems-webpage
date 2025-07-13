@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 
 import { typeDefs } from './schema/loadSchema';
 import { resolvers } from './resolvers';
+import logger from './lib/logger';
 import { ps } from './config/db-pg';
 import { connectToMongo } from './config/db-mongo'; // <-- 1. IMPORTAR
 import { Db } from 'mongodb';                       // <-- 2. IMPORTAR TIPO
@@ -76,12 +77,12 @@ const startServer = async () => {
 
   // 🚀 Iniciar servidor en puerto XXXX
   const port = process.env.PORT || 5005; // ✅ Extraer el puerto a una constante para mayor claridad
-  app.listen(port, () => {
-    console.log(`🚀 Servidor listo en http://localhost:${port}/graphql`);
-  });
+    app.listen(port, () => {
+      logger.info(`🚀 Servidor listo en http://localhost:${port}/graphql`);
+    });
 };
 
 // Manejo de errores global: Atrapar errores que puedan ocurrir durante el inicio del servidor
 startServer().catch((error) => {
-  console.error('❌ Error al iniciar el servidor:', error);
+  logger.error('❌ Error al iniciar el servidor:', error);
 });

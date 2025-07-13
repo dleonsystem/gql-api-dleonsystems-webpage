@@ -2,6 +2,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
 import { ELASTIC_EMAIL_API_KEY } from '../config/constants';
+import logger from './logger';
 
 
 
@@ -51,9 +52,9 @@ export async function sendEmail({
       formData,
       { headers: { ...formData.getHeaders() } }
     );
-    // console.log(`Correo enviado exitosamente a ${recipientName}:`, response.data);
+      // logger.debug(`Correo enviado exitosamente a ${recipientName}:`, response.data);
   } catch (error) {
     const err = error as any;
-    console.error('Error al enviar el correo:', err.response?.data || err.message);
+      logger.error('Error al enviar el correo:', err.response?.data || err.message);
   }
 }

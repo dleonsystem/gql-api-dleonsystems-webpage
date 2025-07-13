@@ -3,6 +3,7 @@ import { verificarTokenReCaptcha } from '../middlewares/recaptcha';
 import JWT from '../lib/jwt';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import logger from '../lib/logger';
 import { renderCorreoRegistro } from '../templates/renderCorreo';
 import { enviarCorreoCancelacion, enviarCorreoListaEspera, enviarCorreoRegistro } from '../lib/enviarCorreo';
 
@@ -19,12 +20,12 @@ async function validarReCaptcha(token: string) {
         }
         return { success: true };
     } catch (err) {
-        console.error('Error validando reCAPTCHA:', err);
+        logger.error('Error validando reCAPTCHA:', err);
         return { success: false, message: 'No se pudo verificar el CAPTCHA' };
     }
 }
 function manejarError(error: any, mensaje: string) {
-    console.error(mensaje, error);
+    logger.error(mensaje, error);
     return { status: false, message: mensaje, data: null };
 }
 
@@ -44,7 +45,7 @@ export const mutationResolvers = {
                   if (!captcha.success)
                     return { status: false, message: captcha.message, data: null };
                 } catch (err) {
-                  console.error('Error validando reCAPTCHA:', err);
+                  logger.error('Error validando reCAPTCHA:', err);
                   return {
                     status: false,
                     message: 'No se pudo verificar el CAPTCHA',
@@ -102,7 +103,7 @@ export const mutationResolvers = {
                     usuario: newUser,
                 };
             } catch (error) {
-                console.error('Error al crear usuario:', error);
+                logger.error('Error al crear usuario:', error);
                 return manejarError(error, 'Error al crear usuario');
             }
         },
@@ -124,7 +125,7 @@ export const mutationResolvers = {
                     if (!captcha.success)
                         return { status: false, message: captcha.message, data: null };
                 } catch (err) {
-                    console.error('Error validando reCAPTCHA:', err);
+                    logger.error('Error validando reCAPTCHA:', err);
                     return {
                         status: false,
                         message: 'No se pudo verificar el CAPTCHA',
@@ -156,7 +157,7 @@ export const mutationResolvers = {
                     usuario: null,
                 };
             } catch (error) {
-                console.error('Error al crear usuario:', error);
+                logger.error('Error al crear usuario:', error);
                 return { status: false, message: 'Error al crear usuario', user: null };
             }
         },
@@ -178,7 +179,7 @@ export const mutationResolvers = {
                     if (!captcha.success)
                         return { status: false, message: captcha.message, data: null };
                 } catch (err) {
-                    console.error('Error validando reCAPTCHA:', err);
+                    logger.error('Error validando reCAPTCHA:', err);
                     return {
                         status: false,
                         message: 'No se pudo verificar el CAPTCHA',
@@ -199,7 +200,7 @@ export const mutationResolvers = {
                         };
                     }
                 } catch (error) {
-                    console.error('Error al verificar el token:', error);
+                    logger.error('Error al verificar el token:', error);
                     return {
                         status: false,
                         message: 'Error al verificar el token',
@@ -294,7 +295,7 @@ export const mutationResolvers = {
                     usuario: updatedUser,
                 };
             } catch (error) {
-                console.error('Error al crear usuario:', error);
+                logger.error('Error al crear usuario:', error);
                 return manejarError(error, 'Error al actualizar usuario');
             }
         },
@@ -312,7 +313,7 @@ export const mutationResolvers = {
                     if (!captcha.success)
                         return { status: false, message: captcha.message, data: null };
                 } catch (err) {
-                    console.error('Error validando reCAPTCHA:', err);
+                    logger.error('Error validando reCAPTCHA:', err);
                     return {
                         status: false,
                         message: 'No se pudo verificar el CAPTCHA',
@@ -347,7 +348,7 @@ export const mutationResolvers = {
                     usuario: user,
                 };
             } catch (error) {
-                console.error('Error al iniciar sesión:', error);
+                logger.error('Error al iniciar sesión:', error);
                 return manejarError(error, 'Error al iniciar sesión');
             }
         },
@@ -366,7 +367,7 @@ export const mutationResolvers = {
                     return { status: false, message: captcha.message, data: null };
                 }
             } catch (err) {
-                console.error('Error validando reCAPTCHA:', err);
+                logger.error('Error validando reCAPTCHA:', err);
                 return manejarError(err, 'No se pudo verificar el CAPTCHA');
             }
 
@@ -485,7 +486,7 @@ export const mutationResolvers = {
                         enlaceEvento: `http://qa.cerrarlabrecha.sep.gob.mx/eventos/${eventoId}`,
                     });
                 } catch (error) {
-                    console.error('Error al enviar correo de confirmación:', error);
+                    logger.error('Error al enviar correo de confirmación:', error);
                     return manejarError(error, 'Error al enviar correo de confirmación');
                 }
 
@@ -496,7 +497,7 @@ export const mutationResolvers = {
                 };
 
             } catch (error) {
-                console.error('❌ Error al crear registro:', error);
+                logger.error('❌ Error al crear registro:', error);
                 return manejarError(error, 'Error al crear registro');
             }
         },
@@ -577,8 +578,8 @@ export const mutationResolvers = {
             FROM "Evento" WHERE "Oid" = $1 AND "GCRecord" IS NULL`,
                     [cancelacion.eventoId]
                 );
-                console.log('usuario', usuario);
-                console.log('evento', evento);
+                logger.debug('usuario', usuario);
+                logger.debug('evento', evento);
                 if (usuario || evento) {
                      enviarCorreoCancelacion({
                         nombreRepresentante: `${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}`,
@@ -592,7 +593,7 @@ export const mutationResolvers = {
                     cancelacion: registro,
                 };
             } catch (error) {
-                console.error('❌ Error al cancelar registro:', error);
+                logger.error('❌ Error al cancelar registro:', error);
                 return manejarError(error, 'Error al cancelar registro');
             }
         },
@@ -630,7 +631,7 @@ export const mutationResolvers = {
                     documento: result,
                 };
             } catch (error) {
-                console.error('❌ Error al cargar documento:', error);
+                logger.error('❌ Error al cargar documento:', error);
                 return manejarError(error, 'Error al cargar documento');
             }
         },
@@ -660,7 +661,7 @@ export const mutationResolvers = {
                     respuesta: result,
                 };
             } catch (error) {
-                console.error('❌ Error al registrar respuesta:', error);
+                logger.error('❌ Error al registrar respuesta:', error);
                 return manejarError(error, 'Error al registrar respuesta');
             }
         },
@@ -711,8 +712,8 @@ export const mutationResolvers = {
             FROM "Evento" WHERE "Oid" = $1 AND "GCRecord" IS NULL`,
                     [eventoId]
                 );
-                console.log('usuario', usuario);
-                console.log('evento', evento);
+                logger.debug('usuario', usuario);
+                logger.debug('evento', evento);
                 if (usuario || evento) {
                     enviarCorreoListaEspera({
                         nombreRepresentante: `${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}`,
@@ -726,7 +727,7 @@ export const mutationResolvers = {
                     listaEspera: [result],
                 };
             } catch (error) {
-                console.error('❌ Error al registrar en lista de espera:', error);
+                logger.error('❌ Error al registrar en lista de espera:', error);
                 return manejarError(error, 'Error al registrar en lista de espera');
             }
         },
