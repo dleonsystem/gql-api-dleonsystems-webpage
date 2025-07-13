@@ -1,6 +1,10 @@
 # gql-api-dleonsystems-webpage
 
-GraphQL API for the dleonsystems webpage.
+API for the dleonsystems web page built with GraphQL.
+
+## Available Scripts
+
+- `npm run lint` – run ESLint on the TypeScript sources.
 
 ## Setup
 
@@ -62,7 +66,7 @@ Create a `.env` file based on `.env.example` and adjust the values as needed.
 | `SMTP_HOST`             | SMTP server host for nodemailer.           |
 | `SMTP_PORT`             | SMTP server port.                          |
 | `SMTP_USER`             | SMTP user account.                         |
-| `SMTP_PASS`             | SMTP user password.                        |
+| `SMTP_PASS`             | SMTP server password.                      |
 | `JSON_LIMIT`            | Max size accepted by `bodyParser.json`. Defaults to `20mb`. |
 | `URLENCODED_LIMIT`      | Limit for `bodyParser.urlencoded`. Defaults to `50mb`.      |
 | `LOG_LEVEL`             | Logging level (`error`, `warn`, `info`, `debug`).           |
