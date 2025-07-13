@@ -125,3 +125,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Ignore leaked credentials
+inifed-b4c408ef8d04.json
+
