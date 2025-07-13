@@ -66,7 +66,7 @@ export const locationQueries = {
 
   async colonias(_: any, { __ }: { __: any }, { ps }: { ps: any }) {
     try {
-      const colonias = await ps.any('SELECT id, "CodigoPostal" as "codigoPostal", "NombreColonia", as "nombreColonia", "MunicipioId" as "municipioId" FROM "Colonias" ORDER BY "NombreColonia"');
+      const colonias = await ps.any('SELECT id, "CodigoPostal" as "codigoPostal", "NombreColonia" as "nombreColonia", "MunicipioId" as "municipioId" FROM "Colonias" ORDER BY "NombreColonia"');
       return { status: true, message: 'Resultado de colonias', colonias };
     } catch (error) {
       logger.error('Error en colonias:', error);
