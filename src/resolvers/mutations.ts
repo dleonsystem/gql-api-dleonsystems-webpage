@@ -7,7 +7,7 @@ import logger from '../lib/logger';
 import { renderCorreoRegistro } from '../templates/renderCorreo';
 import { enviarCorreoCancelacion, enviarCorreoListaEspera, enviarCorreoRegistro } from '../lib/enviarCorreo';
 
-const SECRET_KEY = process.env.JWT_SECRET || 'secreto_super_seguro';
+const SECRET_KEY = process.env.JWT_SECRET as string;
 const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET ?? 'TU_SECRET_KEY';
 async function validarReCaptcha(token: string) {
     try {

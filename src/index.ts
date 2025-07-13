@@ -1,6 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-const express = require('express'); // ❗ Reemplazar `require` con `import` por consistencia
+import express from 'express'; // ❗ Reemplazar `require` con `import` por consistencia
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
@@ -24,14 +24,20 @@ interface MyContext {
 
 // 🔧 Función principal para iniciar el servidor
 const startServer = async () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+
   const app = express();
 
   const mongoDb = await connectToMongo(); // <-- 4. CONECTAR ANTES DE INICIAR
 
 
-  // Aumentar límites de tamaño de solicitudes
-  app.use(bodyParser.json({ limit: '20mb' })); // ❗ Evaluar si el límite de 20mb es necesario o excesivo
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  // Aumentar límites de tamaño de solicitudes usando variables de entorno
+  const jsonLimit = process.env.JSON_LIMIT || '20mb';
+  const urlencodedLimit = process.env.URLENCODED_LIMIT || '50mb';
+  app.use(bodyParser.json({ limit: jsonLimit }));
+  app.use(bodyParser.urlencoded({ limit: urlencodedLimit, extended: true }));
 
   // Confía en proxies (para obtener IP real si hay load balancer)
   app.set('trust proxy', true); // ✅ Buen uso para setups detrás de un proxy
