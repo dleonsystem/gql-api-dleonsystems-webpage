@@ -33,8 +33,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
     "nodemailer": "^7.0.3",
-    "pg-promise": "^11.10.2",
-    "typescript": "^3.9.7"
+    "pg-promise": "^11.10.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -48,7 +47,7 @@
     "cpx": "^1.5.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.2",
     "eslint": "^8.56.0",
     "@typescript-eslint/parser": "^6.15.0",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
