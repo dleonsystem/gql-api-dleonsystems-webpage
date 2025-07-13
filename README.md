@@ -15,7 +15,6 @@ API for the dleonsystems web page built with GraphQL.
 2. Copy the example environment file and adjust the values:
     ```bash
     cp .env.example .env
-    cp .env.example src/.env  # needed so constants load the variables
     ```
 3. Build the project:
     ```bash
