@@ -1,9 +1,7 @@
 // src/lib/mails.ts
 import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
 import logger from './logger';
-
-dotenv.config();
+import '../config/loadEnv';
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
