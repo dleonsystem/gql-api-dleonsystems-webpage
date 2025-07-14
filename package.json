@@ -15,6 +15,9 @@
   "keywords": [],
   "author": "David León Gómez <dleon55@hotmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@apollo/server": "^4.11.2",
     "@emailjs/browser": "^4.4.1",

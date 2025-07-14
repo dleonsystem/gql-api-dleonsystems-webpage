@@ -8,6 +8,8 @@ API for the dleonsystems web page built with GraphQL.
 
 ## Setup
 
+This project requires **Node.js 18** or newer.
+
 1. Install dependencies:
     ```bash
     npm install
