@@ -5,7 +5,17 @@ import { renderCorreoCancelacion } from '../templates/cancelacionCorreo';
 import { renderCorreoListaEspera } from '../templates/listaEsperaCorreo';
 import logger from './logger';
 
-export async function enviarCorreoRegistro(userCheck: any) {
+interface UserCheck {
+    nombreRepresentante: string;
+    correoRepresentante: string;
+    nombreEvento: string;
+    fechaEvento?: string;
+    horaEvento?: string;
+    lugarEvento?: string;
+    enlaceEvento?: string;
+}
+
+export async function enviarCorreoRegistro(userCheck: UserCheck) {
     try {
         const html = renderCorreoRegistro(userCheck.nombreRepresentante, userCheck.nombreEvento, userCheck.fechaEvento, userCheck.horaEvento, userCheck.lugarEvento, userCheck.enlaceEvento);
         const response = await axios.post(
@@ -35,7 +45,7 @@ export async function enviarCorreoRegistro(userCheck: any) {
     }
 }
 
-export async function enviarCorreoCancelacion(userCheck: any) {
+export async function enviarCorreoCancelacion(userCheck: UserCheck) {
     try {
         const html = renderCorreoCancelacion(userCheck.nombreRepresentante, userCheck.nombreEvento);
         const response = await axios.post(
@@ -65,7 +75,7 @@ export async function enviarCorreoCancelacion(userCheck: any) {
     }
 }
 
-export async function enviarCorreoListaEspera(userCheck: any) {
+export async function enviarCorreoListaEspera(userCheck: UserCheck) {
     try {
         const html = renderCorreoListaEspera(userCheck.nombreRepresentante, userCheck.nombreEvento);
         const response = await axios.post(
