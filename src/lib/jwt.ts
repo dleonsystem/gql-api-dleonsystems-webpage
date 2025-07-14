@@ -15,7 +15,7 @@ class JWT {
      * @param data - Objeto con información del usuario (se espera que incluya "user")
      * @returns Token JWT como string
      */
-    sign(data: any): string {
+    sign(data: { user: string }): string {
         return jwt.sign(
             { user: data.user },           // Payload
             this.secretKey,                // Clave secreta

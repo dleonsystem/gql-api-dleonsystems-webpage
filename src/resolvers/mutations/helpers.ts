@@ -14,7 +14,7 @@ export async function validarReCaptcha(token: string) {
   }
 }
 
-export function manejarError(error: any, mensaje: string) {
+export function manejarError(error: unknown, mensaje: string) {
   logger.error(mensaje, error);
   return { status: false, message: mensaje, data: null };
 }

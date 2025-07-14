@@ -47,14 +47,13 @@ export async function sendEmail({
   }
 
   try {
-    const response = await axios.post(
+    await axios.post(
       'https://api.elasticemail.com/v2/email/send',
       formData,
       { headers: { ...formData.getHeaders() } }
     );
-      // logger.debug(`Correo enviado exitosamente a ${recipientName}:`, response.data);
   } catch (error) {
-    const err = error as any;
-      logger.error('Error al enviar el correo:', err.response?.data || err.message);
+    const err = error as { response?: { data?: unknown }; message?: string };
+    logger.error('Error al enviar el correo:', err.response?.data || err.message);
   }
 }

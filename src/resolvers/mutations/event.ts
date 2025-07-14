@@ -15,7 +15,7 @@ export const eventMutations = {
       return manejarError(err, 'No se pudo verificar el CAPTCHA');
     }
 
-    let {
+    const {
       eventoId, usuarioId, nombre, apellidoPaterno, apellidoMaterno,
       correoElectronico, telefono, curp, sector, nivelEducativo,
       subsistema, giroEmpresa, tamanioEmpresa, ubicacionesEmpresa,

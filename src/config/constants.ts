@@ -1,8 +1,4 @@
-import environments from './environments';
-
-if (process.env.NODE_ENV !== 'production') {
-    const environment = environments;
-}
+import './environments';
 export const ELASTIC_EMAIL_API_KEY = process.env.ELASTIC_EMAIL_API_KEY ?? ''; // Coloca tu API Key aquí
 export const SECRET_KEY = process.env.JWT_SECRET ?? '';
 export const HOSTMYSQL= process.env.HOSTMYSQL ?? 'localhost';

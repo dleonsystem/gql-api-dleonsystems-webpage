@@ -2,12 +2,12 @@ export class Datetime {
 
     getCurrentDateTime(dateSeparateSymbol: string = '-') {
         const dateTime = new Date();
-        let dateDay: string = this.formatWithTwoDigits(String(dateTime.getDate()));
-        let month: string = this.formatWithTwoDigits(String(dateTime.getMonth() + 1));
+        const dateDay = this.formatWithTwoDigits(String(dateTime.getDate()));
+        const month = this.formatWithTwoDigits(String(dateTime.getMonth() + 1));
 
-        let hour : string = this.formatWithTwoDigits(String(dateTime.getHours()));
-        let minutes : string = this.formatWithTwoDigits(String(dateTime.getMinutes()));
-        let seconds : string = this.formatWithTwoDigits(String(dateTime.getSeconds()));
+        const hour = this.formatWithTwoDigits(String(dateTime.getHours()));
+        const minutes = this.formatWithTwoDigits(String(dateTime.getMinutes()));
+        const seconds = this.formatWithTwoDigits(String(dateTime.getSeconds()));
 
         return `${dateTime.getFullYear()}${dateSeparateSymbol}${month}${dateSeparateSymbol}${dateDay} ${hour}:${minutes}:${seconds}`;
     }
@@ -24,13 +24,10 @@ export class Datetime {
      * @param days add days in select date
      * @param customDate Specify date if use select date
      */
-    addDays(days: number, date: string, customDate: string = '', ) {
-        let date_ = new Date(date);
-        if (customDate !== '') {
-            date_ = new Date(customDate);
-        }
+    addDays(days: number, date: string, customDate: string = '') {
+        const date_ = customDate !== '' ? new Date(customDate) : new Date(date);
         date_.setDate(date_.getDate() + days);
-        return date;
+        return date_.toISOString();
     }
 
 

@@ -10,7 +10,7 @@ const SECRET_KEY = process.env.JWT_SECRET as string;
  * @param req - Request HTTP
  * @returns Datos extraídos del token o null si no hay token válido
  */
-export const authMiddleware = async ({ req }: { req: any }) => {
+export const authMiddleware = async ({ req }: { req: { headers: Record<string, string>; db: unknown } }) => {
     const token = req.headers.authorization || '';
 
     if (!token) {
@@ -18,7 +18,7 @@ export const authMiddleware = async ({ req }: { req: any }) => {
     }
 
     try {
-        const decoded: any = jwt.verify(token.replace('Bearer ', ''), SECRET_KEY);
+        const decoded = jwt.verify(token.replace('Bearer ', ''), SECRET_KEY) as { usuarioId: string | number; rol: string };
         logger.debug({
             usuarioId: decoded.usuarioId,
             rol: decoded.rol,

@@ -18,16 +18,16 @@ function shouldLog(lvl: LogLevel): boolean {
 }
 
 const logger = {
-  error: (...args: any[]) => {
+  error: (...args: unknown[]) => {
     if (shouldLog('error')) console.error(...args);
   },
-  warn: (...args: any[]) => {
+  warn: (...args: unknown[]) => {
     if (shouldLog('warn')) console.warn(...args);
   },
-  info: (...args: any[]) => {
+  info: (...args: unknown[]) => {
     if (shouldLog('info')) console.log(...args);
   },
-  debug: (...args: any[]) => {
+  debug: (...args: unknown[]) => {
     if (shouldLog('debug')) console.debug(...args);
   },
 };
