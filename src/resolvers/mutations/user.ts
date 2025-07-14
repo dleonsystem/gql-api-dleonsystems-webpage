@@ -155,11 +155,17 @@ export const userMutations = {
       const user = await ps.oneOrNone(
         `SELECT "Oid" as id, "CorreoElectronico" as "correoElectronico", "Nombre" as nombre, "ApellidoPaterno" as "apellidoPaterno",
                 "ApellidoMaterno" as "apellidoMaterno",   "Telefono" as telefono, "CURP" as curp, TO_CHAR("FechaNacimiento", 'YYYY-MM-DD') as "fechaNacimiento", CASE WHEN "Sexo"=1 THEN 'MUJER'
-                WHEN "Sexo"=2 THEN 'HOMBRE' ELSE 'PENDIENTE' END as sexo, "Domicilio" as domicinio, "ContraseñaHash",
+                WHEN "Sexo"=2 THEN 'HOMBRE' ELSE 'PENDIENTE' END as sexo, "Domicilio" as domicinio,
                 "Rol" as rol, "FechaRegistro" as "fechaRegistro"  FROM "Usuario" WHERE "GCRecord" IS NULL AND "CorreoElectronico" = $1`,
         [input.correoElectronico],
       );
-      if (!user || !bcryptjs.compareSync(input.password, user.ContraseñaHash)) {
+
+      const passwordData = await ps.oneOrNone(
+        `SELECT "ContraseñaHash" FROM "Usuario" WHERE "GCRecord" IS NULL AND "CorreoElectronico" = $1`,
+        [input.correoElectronico],
+      );
+
+      if (!user || !passwordData || !bcryptjs.compareSync(input.password, passwordData.ContraseñaHash)) {
         return { status: false, message: 'Credenciales incorrectas', token: null };
       }
       const token = new JWT().sign({ user });
