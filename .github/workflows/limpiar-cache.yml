@@ -1,0 +1,101 @@
+name: Limpieza de caché al cerrar una entrega
+
+# POR QUE EXISTE
+# ==============
+#
+# El límite de caché de Actions es **10 GB por repositorio**. Al superarlo,
+# GitHub expulsa las entradas más antiguas —y no distingue entre una caché viva
+# y una muerta—. Una caché útil expulsada antes de reutilizarse no ahorra nada
+# y encima se vuelve a subir en la corrida siguiente: cuesta más que no cachear.
+#
+# Cada entrega deja sus cachés bajo `refs/pull/N/merge`. Al fusionarse o
+# cerrarse, esas entradas ya no las puede reutilizar nadie: ninguna corrida
+# futura tendrá ese ref. Pero se quedan ocupando sitio hasta que las expulsa el
+# límite, empujando fuera a las que sí sirven.
+#
+# Medido el 16 de agosto de 2026: `inifed` tenía 7.90 GB de 10 (79 %), con
+# **cuatro copias de 792 MB de la caché de NuGet en entregas ya fusionadas** —3.2
+# GB muertos—. `lionsystems-quotation-tool` tenía 6.72 GB en 189 entradas.
+#
+# El coste de las cachés no aparece en la factura: son gratuitas. Lo que se paga
+# es el efecto de segundo orden, cuando dejan de servir y se vuelve a descargar.
+# Por eso pasa desapercibido.
+on:
+  pull_request:
+    types: [closed]
+
+# costo-ci-exento: filtro-rutas — la limpieza debe correr al cerrar CUALQUIER entrega, sin importar qué archivos tocó; acotarla por ruta dejaría cachés huérfanas de las entregas filtradas
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+# `actions: write` es lo mínimo para borrar cachés. `contents: read` ni siquiera
+# hace falta —no se hace checkout—, pero se declara para dejar el alcance
+# explícito en lugar de heredar el del repositorio.
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  limpiar:
+    name: Retirar las cachés de la entrega cerrada
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Borrar las cachés de esta entrega
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          REF: refs/pull/${{ github.event.pull_request.number }}/merge
+        run: |
+          set -euo pipefail
+
+          # No se hace checkout a propósito: este trabajo no necesita el árbol,
+          # y clonar un repositorio grande para borrar unas entradas de caché
+          # sería gastar justo lo que se viene a ahorrar.
+
+          ids=$(gh api "/repos/${REPO}/actions/caches?ref=${REF}&per_page=100" \
+                  --jq '.actions_caches[].id' 2>/dev/null || true)
+
+          if [ -z "${ids}" ]; then
+            echo "La entrega no dejó cachés bajo ${REF}."
+            echo "Sin cachés que retirar." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          total=0
+          for id in ${ids}; do
+            # Un borrado que falla no debe tumbar el trabajo: la caché pudo
+            # expirar o ser expulsada entre el listado y el borrado, y esa
+            # carrera es normal, no un error que merezca detener nada.
+            if gh api -X DELETE "/repos/${REPO}/actions/caches/${id}" >/dev/null 2>&1; then
+              total=$((total + 1))
+            fi
+          done
+
+          echo "Cachés retiradas: ${total}"
+
+          {
+            echo "## Limpieza de caché"
+            echo ""
+            echo "Entrega **#${{ github.event.pull_request.number }}** cerrada."
+            echo "Cachés retiradas: **${total}**"
+            echo ""
+            echo "Se liberan para las entregas vivas. El límite del repositorio"
+            echo "es de 10 GB; al superarlo GitHub expulsa las más antiguas sin"
+            echo "distinguir si siguen sirviendo."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Estado de la caché tras la limpieza
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          uso=$(gh api "/repos/${REPO}/actions/cache/usage" \
+                  --jq '"\(.active_caches_count) entradas, \(.active_caches_size_in_bytes / 1073741824 * 100 | round / 100) GB de 10"')
+          echo "Ocupación: ${uso}"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Ocupación tras la limpieza: **${uso}**" >> "$GITHUB_STEP_SUMMARY"
