@@ -1,0 +1,301 @@
+name: Validación de flujos
+
+# POR QUE EXISTE
+# ==============
+#
+# El presupuesto de Actions de la organizacion —3 000 minutos al mes para todos
+# los repositorios privados juntos— se agoto el 11 de agosto de 2026, con un
+# excedente proyectado de 38 USD. La causa no fue verificar de mas: fue repetir
+# trabajo identico sin cachear y medir dos veces el mismo commit.
+#
+# Las reglas para no reincidir estan en AGENTS.md. Este flujo las convierte en
+# compuerta: una regla documentada que nadie comprueba se erosiona en semanas,
+# y quien la incumple no se entera hasta que llega la factura.
+#
+# CORRE SOLO EN PULL REQUEST, Y SOLO SI CAMBIAN LOS FLUJOS
+# =======================================================
+#
+# Antes de fusionar es donde la comprobacion puede impedir el gasto en lugar de
+# documentarlo. En empuje no aporta: el flujo ya esta dentro. Y con el filtro de
+# rutas, un cambio que no toca `.github/workflows/` no lo despierta.
+#
+# Coste medido de este flujo: unos 15 segundos. Si costara mas, seria parte del
+# problema que viene a resolver.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# DOS EXENCIONES DE ESTE PROPIO FLUJO, Y ESTAN AQUI PARA QUE SE VEAN
+#
+# El validador se revisa a si mismo, como debe ser. Dispara dos reglas por
+# motivos que no son incumplimientos reales, y en lugar de silenciarlas en el
+# codigo se declaran con el mismo mecanismo que se ofrece a los demas. Sirve
+# ademas de ejemplo de uso.
+#
+# costo-ci-exento: no-cache-dir — la cadena aparece en la definicion de la regla que la prohibe, no en un comando
+# costo-ci-exento: cache-pip — instala un unico paquete de respaldo; la cache costaria mas de lo que ahorra
+
+jobs:
+  validar:
+    name: Reglas de costo en los flujos
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Hace falta el historico para saber QUE flujos toca esta entrega. Sin
+      # eso solo se puede revisar el repositorio entero, y entonces una entrega
+      # queda bloqueada por deuda ajena que no introdujo: el modo mas rapido de
+      # que una compuerta se desactive por molesta.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # PyYAML viene preinstalado en la imagen `ubuntu-latest`. El respaldo
+      # existe por si eso deja de ser cierto. La exencion correspondiente esta
+      # declarada arriba, junto a la otra.
+      - name: Asegurar PyYAML
+        run: python3 -c "import yaml" 2>/dev/null || pip install --quiet pyyaml
+
+      - name: Determinar qué flujos toca esta entrega
+        id: cambios
+        run: |
+          BASE=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
+          LISTA=$(git diff --name-only "$BASE" HEAD -- '.github/workflows/' | tr '\n' ' ')
+          echo "Base de comparación: $BASE"
+          echo "Flujos modificados : ${LISTA:-ninguno}"
+          echo "lista=$LISTA" >> "$GITHUB_OUTPUT"
+
+      # QUE RAMAS ESTAN PROTEGIDAS
+      #
+      # Hace falta para una regla que no se puede deducir del archivo solo: si
+      # una rama exige entrega para recibir cambios, su disparador de `push`
+      # repite lo que la entrega ya midio. Ver la regla `push-duplicado`.
+      #
+      # Se usa `?protected=true`, que responde con el token por omision. El
+      # endpoint de proteccion detallada exige permisos de administracion que
+      # este token no tiene, y no hacen falta: basta saber cuales estan
+      # protegidas.
+      - name: Ramas protegidas del repositorio
+        id: ramas
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          # Un fallo aqui no debe tumbar la compuerta: sin la lista, la regla
+          # `push-duplicado` simplemente no se evalua y las demas siguen.
+          lista=$(gh api "/repos/${{ github.repository }}/branches?protected=true&per_page=100" \
+                    --jq '.[].name' 2>/dev/null | tr '\n' ' ' || true)
+          echo "Ramas protegidas: ${lista:-ninguna o no consultable}"
+          echo "lista=${lista}" >> "$GITHUB_OUTPUT"
+
+      - name: Comprobar reglas
+        env:
+          FLUJOS_CAMBIADOS: ${{ steps.cambios.outputs.lista }}
+          RAMAS_PROTEGIDAS: ${{ steps.ramas.outputs.lista }}
+        run: |
+          cat > /tmp/validar.py <<'PYEOF'
+          import glob, os, re, sys, yaml
+
+          # Cada regla puede eximirse por archivo con una linea:
+          #     # costo-ci-exento: <regla> — <razon>
+          # La razon es obligatoria: una excepcion sin motivo escrito es una
+          # excepcion que nadie podra revisar despues.
+          EXENTO = re.compile(r"#\s*costo-ci-exento:\s*([a-z0-9-]+)\s*[—-]\s*(\S.*)")
+
+          fallos = []
+          avisos = []
+
+          def sin_comentarios(texto):
+              """Texto sin lineas de comentario.
+
+              Las comprobaciones por expresion regular miran el texto crudo, y
+              eso las hace mentir: un comentario que dice «se retiro
+              --no-cache-dir» disparaba la regla de --no-cache-dir. Un
+              validador que marca lo que el propio autor documento como
+              corregido pierde toda credibilidad, y una compuerta sin
+              credibilidad se desactiva.
+              """
+              return "\n".join(l for l in texto.split("\n")
+                               if not l.lstrip().startswith("#"))
+
+          def revisar(ruta, texto_crudo, doc):
+              texto = sin_comentarios(texto_crudo)
+              # Las exenciones SI se buscan en el texto crudo: viven en
+              # comentarios, que es justo lo que `sin_comentarios` quita.
+              exentas = {}
+              for m in EXENTO.finditer(texto_crudo):
+                  exentas[m.group(1)] = m.group(2).strip()
+
+              def falla(regla, mensaje):
+                  if regla in exentas:
+                      avisos.append("%s: %s eximida — %s" % (ruta, regla, exentas[regla]))
+                  else:
+                      fallos.append("%s: %s\n      %s" % (ruta, regla, mensaje))
+
+              disp = doc.get("on", doc.get(True)) or {}
+              if isinstance(disp, str):
+                  disp = {disp: None}
+
+              # 1. Filtro de rutas en los disparadores que corren solos
+              for ev in ("push", "pull_request"):
+                  cfg = disp.get(ev)
+                  if cfg is None:
+                      continue
+                  if not isinstance(cfg, dict) or not (cfg.get("paths") or cfg.get("paths-ignore")):
+                      falla("filtro-rutas",
+                            "el disparador '%s' no tiene 'paths' ni 'paths-ignore'. "
+                            "Un cambio que no puede romper el codigo no debe "
+                            "levantar el pipeline." % ev)
+
+              # 1-bis. El mismo arbol medido dos veces
+              #
+              # Si una rama esta protegida, los cambios le llegan por entrega.
+              # El commit de fusion tiene el arbol que la referencia de fusion
+              # de la entrega YA midio, asi que el disparador de `push` no
+              # aporta informacion nueva: repite la misma medicion minutos
+              # despues.
+              #
+              # Medido en lga_legajo el 16 de agosto de 2026: el laboratorio
+              # corrio 18 veces en un dia, 176 minutos, siempre en pares
+              # —entrega 12.7 min, empuje a main 12.6 min sobre el mismo arbol—.
+              # Seis entregas costaron doce corridas.
+              #
+              # Solo se marca cuando el flujo tiene AMBOS disparadores sobre la
+              # misma rama protegida. Un flujo que solo corre en `push` no
+              # duplica nada, y ahi el disparador es correcto.
+              protegidas = set(os.environ.get("RAMAS_PROTEGIDAS", "").split())
+              cfg_pr = disp.get("pull_request")
+              cfg_push = disp.get("push")
+              if protegidas and isinstance(cfg_pr, dict) and isinstance(cfg_push, dict):
+                  ramas_push = set(cfg_push.get("branches") or [])
+                  bases_pr = cfg_pr.get("branches")
+                  # Sin filtro de ramas, la entrega corre contra cualquier base
+                  solapan = (ramas_push & protegidas) if bases_pr is None \
+                            else (set(bases_pr) & ramas_push & protegidas)
+                  if solapan:
+                      falla("push-duplicado",
+                            "corre en 'pull_request' y en 'push' sobre %s, que "
+                            "esta protegida. Toda entrega llega por PR, asi que "
+                            "el empuje mide el mismo arbol que la entrega ya "
+                            "midio. Quita esa rama del disparador de 'push'."
+                            % ", ".join(sorted(solapan)))
+
+              # 2. Concurrencia
+              if not doc.get("concurrency"):
+                  falla("concurrencia",
+                        "sin bloque 'concurrency'. Cada empuje deja viva la corrida "
+                        "anterior compitiendo por los mismos ejecutores.")
+
+              # 3. Ejecutores caros
+              for m in re.finditer(r"runs-on:\s*\[?\s*['\"]?([\w.-]+)", texto):
+                  ej = m.group(1).lower()
+                  if ej.startswith("windows") or ej.startswith("macos"):
+                      falla("ejecutor",
+                            "usa '%s'. Windows cuesta 2x y macOS 10x frente a "
+                            "ubuntu-latest." % ej)
+                      break
+
+              # 4. Cache deshabilitada a proposito
+              if "--no-cache-dir" in texto:
+                  falla("no-cache-dir",
+                        "usa '--no-cache-dir'. Eso apaga incluso la cache local "
+                        "que pip mantiene por su cuenta.")
+
+              # 5. Dependencias sin cache
+              usa_npm = re.search(r"npm (ci|install)\b", texto)
+              tiene_npm = re.search(r"cache:\s*['\"]?npm", texto) or "node_modules" in texto
+              if usa_npm and not tiene_npm:
+                  falla("cache-npm",
+                        "instala con npm sin 'cache: npm' en setup-node.")
+
+              usa_pip = re.search(r"pip install\b", texto)
+              tiene_pip = (re.search(r"cache:\s*['\"]?pip", texto)
+                           or "~/.cache/pip" in texto)
+              if usa_pip and not tiene_pip:
+                  falla("cache-pip",
+                        "instala con pip sin cache. Anade 'cache: pip' en "
+                        "setup-python o cachea ~/.cache/pip.")
+
+              if "playwright install" in texto and "ms-playwright" not in texto:
+                  falla("cache-playwright",
+                        "instala navegadores de Playwright sin cachear "
+                        "~/.cache/ms-playwright. Son cientos de MB por corrida.")
+
+              if re.search(r"dotnet (restore|build)\b", texto) and ".nuget/packages" not in texto:
+                  falla("cache-nuget",
+                        "usa dotnet sin cachear ~/.nuget/packages.")
+
+              # 6. Retencion de artefactos
+              for m in re.finditer(r"uses:\s*actions/upload-artifact", texto):
+                  cola = texto[m.end():m.end() + 700]
+                  ret = re.search(r"retention-days:\s*(\d+)", cola)
+                  if not ret:
+                      falla("retencion",
+                            "sube artefactos sin 'retention-days'. El valor por "
+                            "omision es 90 dias.")
+                      break
+                  if int(ret.group(1)) > 7:
+                      falla("retencion",
+                            "retention-days=%s. El acuerdo es entre 5 y 7."
+                            % ret.group(1))
+                      break
+
+          # SOLO LO QUE TOCA ESTA ENTREGA
+          #
+          # Revisar el repositorio entero suena mas riguroso y es peor: bloquea
+          # entregas por flujos que no modificaron. La deuda heredada se atiende
+          # aparte; lo que esta compuerta impide es que ENTRE deuda nueva.
+          cambiados = os.environ.get("FLUJOS_CAMBIADOS", "").split()
+          todos = sorted(glob.glob(".github/workflows/*.yml")
+                         + glob.glob(".github/workflows/*.yaml"))
+          if cambiados:
+              archivos = [a for a in todos if a.replace("\\", "/") in cambiados]
+              alcance = "flujos modificados por esta entrega"
+          else:
+              archivos = todos
+              alcance = "todos los flujos del repositorio"
+
+          if not archivos:
+              print("Esta entrega no modifica ningun flujo.")
+              sys.exit(0)
+          print("Alcance: %s" % alcance)
+
+          for ruta in archivos:
+              with open(ruta, encoding="utf-8") as fh:
+                  texto = fh.read()
+              try:
+                  doc = yaml.safe_load(texto)
+              except Exception as exc:
+                  fallos.append("%s: yaml-invalido\n      %s" % (ruta, exc))
+                  continue
+              if isinstance(doc, dict):
+                  revisar(ruta, texto, doc)
+
+          print("Flujos revisados: %d" % len(archivos))
+          if avisos:
+              print("\nExenciones declaradas:")
+              for a in avisos:
+                  print("  - %s" % a)
+          if fallos:
+              print("\nIncumplimientos (%d):\n" % len(fallos))
+              for f in fallos:
+                  print("  - %s\n" % f)
+              print("Las reglas y su porque estan en AGENTS.md, apartado")
+              print("'Costo de integracion continua'.")
+              print("")
+              print("Si una regla no aplica a un flujo concreto, declara la")
+              print("excepcion en el propio archivo con:")
+              print("    # costo-ci-exento: <regla> — <razon>")
+              sys.exit(1)
+
+          print("\nSin incumplimientos.")
+          PYEOF
+          python3 /tmp/validar.py | tee -a "$GITHUB_STEP_SUMMARY"
