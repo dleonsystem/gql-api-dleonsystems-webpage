@@ -1,7 +1,6 @@
 import { RecaptchaEnterpriseServiceClient } from '@google-cloud/recaptcha-enterprise';
-import dotenv from 'dotenv';
 import logger from '../lib/logger';
-dotenv.config();
+import '../config/loadEnv';
 
 export async function verificarTokenReCaptcha(token: string): Promise<boolean> {
   const projectId = process.env.RECAPTCHA_PROJECT_ID!;
